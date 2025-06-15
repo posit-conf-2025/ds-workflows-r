@@ -3,7 +3,7 @@ WORKSHOP_TITLE
 
 ### posit::conf(2025)
 
-by INSTRUCTOR_NAME
+by James Black, Orla Doyle, Doug Kelkhoff, and Michael Mayer
 
 -----
 
