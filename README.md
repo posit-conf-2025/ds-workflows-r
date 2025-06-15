@@ -3,7 +3,7 @@ WORKSHOP_TITLE
 
 ### posit::conf(2025)
 
-by James Black, Orla Doyle, Doug Kelkhoff, and Michael Mayer
+by Katie Masiello and Ryan Johnson 
 
 -----
 
