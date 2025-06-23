@@ -6,7 +6,7 @@ library(jsonlite)
 library(vetiver)
 
 # API configuration
-API_URL <- "https://connect.posit.it/content/d38c29b8-250f-4a22-ba05-4ff4a49f0304/predict"
+API_URL <- "https://connect.posit.it/content/127ec7f3-d930-4f52-8f49-52b03f0c0250/predict"
 # IMPORTANT: Ensure your CONNECT_API_KEY environment variable is set
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
@@ -52,7 +52,7 @@ ui <- page_sidebar(
       card_header("Product Details"),
       selectInput("product",
                   "Product:",
-                  choices = c("Posit Classic", "Posit Lite", "Workbench Energy", "Quarto Fizz"),
+                  choices = c("Posit Classic", "Posit Lite", "Workbench Energy", "Quarto Fizz", "Connect Orange", "Cloud Water"),
                   selected = "Posit Classic"),
       
       selectInput("region",

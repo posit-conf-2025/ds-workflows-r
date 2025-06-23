@@ -48,11 +48,11 @@ monitoring_data <- tibble(
     # Product-specific adjustments (with slight market evolution)
     product_multiplier = case_when(
       product == "Posit Classic" ~ runif(n(), 1.1, 1.7),  # Slight decline
-      product == "Diet Coke" ~ runif(n(), 0.85, 1.25),        # Slight growth
-      product == "Coke Zero" ~ runif(n(), 0.75, 1.15),        # Growth
-      product == "Sprite" ~ runif(n(), 0.95, 1.35),           # Stable
-      product == "Fanta Orange" ~ runif(n(), 0.65, 1.05),     # Slight growth
-      product == "Coca-Cola Energy" ~ runif(n(), 0.35, 0.75), # Growth category
+      product == "Posit Zero" ~ runif(n(), 0.85, 1.25),        # Slight growth
+      product == "Posit Lite" ~ runif(n(), 0.75, 1.15),        # Growth
+      product == "Quarto Fizz" ~ runif(n(), 0.95, 1.35),           # Stable
+      product == "Connect Orange" ~ runif(n(), 0.65, 1.05),     # Slight growth
+      product == "Workbench Energy" ~ runif(n(), 0.35, 0.75), # Growth category
       TRUE ~ runif(n(), 0.85, 1.25)                           # Water growing
     ),
     
@@ -83,12 +83,12 @@ monitoring_data <- tibble(
     
     # Unit prices with inflation (matching training data patterns)
     base_price = case_when(
-      product == "Coca-Cola Classic" ~ runif(n(), 1.30, 1.95),  # Inflation
-      product == "Diet Coke" ~ runif(n(), 1.35, 2.00),
-      product == "Coke Zero" ~ runif(n(), 1.35, 2.00),
-      product == "Sprite" ~ runif(n(), 1.25, 1.90),
-      product == "Fanta Orange" ~ runif(n(), 1.20, 1.85),
-      product == "Coca-Cola Energy" ~ runif(n(), 2.70, 3.80),
+      product == "Posit Classic" ~ runif(n(), 1.30, 1.95),  # Inflation
+      product == "Posit Zero" ~ runif(n(), 1.35, 2.00),
+      product == "Posit Lite" ~ runif(n(), 1.35, 2.00),
+      product == "Quarto Fizz" ~ runif(n(), 1.25, 1.90),
+      product == "Connect Orange" ~ runif(n(), 1.20, 1.85),
+      product == "Workbench Energy" ~ runif(n(), 2.70, 3.80),
       TRUE ~ runif(n(), 0.90, 1.35)  # Water
     ),
     
@@ -116,14 +116,14 @@ monitoring_data <- tibble(
     # Calculate revenue
     revenue = units_sold * unit_price
   ) |>
-  # Select EXACT same columns as coca_cola_sales_clean
+  # Select EXACT same columns as posit_cola_sales_clean
   select(date, product, region, store_type, store_id, units_sold, unit_price, revenue, promotion)
 
 # Display summary
 cat("Monitoring Dataset Created!\n")
 cat("Records:", nrow(monitoring_data), "\n")
 cat("Columns:", ncol(monitoring_data), "\n")
-cat("Column names match:", identical(names(monitoring_data), names(coca_cola_data)), "\n")
+cat("Column names match:", identical(names(monitoring_data), names(posit_cola_data)), "\n")
 
 # Show structure comparison
 cat("\nColumn structure:\n")
@@ -139,4 +139,4 @@ head(monitoring_data, 10)
 
 # Save the monitoring dataset
 write.csv(monitoring_data, "data/posit_cola_sales_monitoring_data.csv", row.names = FALSE)
-cat("\nMonitoring dataset saved as 'data/coca_cola_sales_monitoring_data.csv'\n")
+cat("\nMonitoring dataset saved as 'data/posit_cola_sales_monitoring_data.csv'\n")

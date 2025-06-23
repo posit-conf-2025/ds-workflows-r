@@ -92,7 +92,7 @@ For this activity, we will train and fit a logistic regression model to predict 
 #| label: read-data
 
 # Read in the posit-cola sales data
-posit_cola_data <- read_csv("data/posit_cola_sales_data_clean.csv")
+posit_cola_data <- read_csv("data/posit_cola_sales_data.csv")
 ```
 
 
@@ -441,10 +441,10 @@ How do we know which model is performing better? Logistic regression or random f
 monitoring_data <- read_csv("data/posit_cola_sales_monitoring_data.csv")
 
 # Load the vetiver model
-vetiver_model_lm <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "757597")
+vetiver_model_lm <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "758134")
 
 # Load the vetiver model rf
-vetiver_model_rf <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "757619")
+vetiver_model_rf <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "758136")
 
 # Compute metrics for the logistic regression model
 sales_revenue_metrics_lm <-
@@ -466,14 +466,33 @@ sales_revenue_metrics_rf <-
       estimate = .pred
     )
 
-# Plot the metrics for the logistic regression model
-vetiver_plot_metrics(sales_revenue_metrics_lm) +
-  scale_size(range = c(2, 4)) +
-  labs(title = pin_meta(board = board, "ryan/posit_cola_revenue_model", version = "757597")$description)
+# Combine metrics from both models for comparison
+combined_metrics <- bind_rows(
+  sales_revenue_metrics_lm |> mutate(model = "Linear Regression"),
+  sales_revenue_metrics_rf |> mutate(model = "Random Forest")
+)
 
-# Plot the metrics for the GLM model
-vetiver_plot_metrics(sales_revenue_metrics_rf) +
-  scale_size(range = c(2, 4)) +
-  labs(title = pin_meta(board = board, "ryan/posit_cola_revenue_model", version = "757619")$description)
+# Create combined plot showing both models
+library(ggplot2)
+combined_metrics |>
+  ggplot(aes(x = .index, y = .estimate, color = model)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  facet_wrap(~.metric, scales = "free_y", ncol = 2) +
+  scale_color_manual(values = c("Linear Regression" = "#4A90E2", "Random Forest" = "#E67E22")) +
+  labs(
+    title = "Model Performance Comparison Over Time",
+    subtitle = "Posit Cola Revenue Models - Linear Regression vs Random Forest",
+    x = "Date",
+    y = "Metric Value",
+    color = "Model Type"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12)
+  )
 
 ```
