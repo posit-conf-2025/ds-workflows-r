@@ -1,0 +1,452 @@
+---
+title: "Create Coca-Cola Sales Dataset"
+author: "Ryan Claude Code Johnson"
+date: today
+format: html
+---
+
+# Purpose
+
+Generate realistic sales data with data quality issues for validation practice. This dataset includes seasonal patterns, regional variations, and intentional data quality issues to practice data validation and cleaning techniques.
+
+## Setup
+
+```{r setup}
+#| message: false
+#| warning: false
+
+library(dplyr)
+library(lubridate)
+
+# Set seed for reproducibility
+set.seed(42)
+```
+
+## Parameters
+
+```{r parameters}
+# Define parameters
+n_records <- 50000
+start_date <- as.Date("2021-01-01")
+end_date <- as.Date("2023-12-31")
+```
+
+## Data Structure Definition
+
+### Product Catalog
+
+```{r products}
+# Product catalog
+products <- c(
+  "Coca-Cola Classic",
+  "Diet Coke",
+  "Coke Zero",
+  "Sprite",
+  "Fanta Orange",
+  "Coca-Cola Energy",
+  "Dasani Water"
+)
+```
+
+### Geographic Regions
+
+```{r regions}
+# Regions with different market sizes
+regions <- c(
+  "North America",
+  "Europe",
+  "Asia Pacific",
+  "Latin America",
+  "Africa"
+)
+region_weights <- c(0.35, 0.25, 0.25, 0.10, 0.05)
+```
+
+### Store Types
+
+```{r store-types}
+# Store types
+store_types <- c(
+  "Supermarket",
+  "Convenience Store",
+  "Restaurant",
+  "Vending Machine",
+  "Gas Station"
+)
+```
+
+## Dataset Generation
+
+### Base Dataset Creation
+
+```{r base-dataset}
+# Generate base dataset
+coca_cola_sales <- tibble(
+  # Date with some missing values (2% missing)
+  date = sample(
+    seq(start_date, end_date, by = "day"),
+    n_records,
+    replace = TRUE
+  ),
+
+  # Product mix (Coca-Cola Classic dominates)
+  product = sample(
+    products,
+    n_records,
+    replace = TRUE,
+    prob = c(0.4, 0.15, 0.15, 0.12, 0.08, 0.05, 0.05)
+  ),
+
+  # Regional distribution
+  region = sample(regions, n_records, replace = TRUE, prob = region_weights),
+
+  # Store types
+  store_type = sample(store_types, n_records, replace = TRUE),
+
+  # Store IDs (some duplicates intentionally)
+  store_id = sample(1:8000, n_records, replace = TRUE)
+)
+```
+
+### Add Business Logic and Patterns
+
+```{r business-logic}
+coca_cola_sales <- coca_cola_sales |>
+  # Add seasonal and trend effects
+  mutate(
+    # Extract date components for seasonal patterns
+    month = month(date),
+    year = year(date),
+    day_of_week = wday(date),
+
+    # Base units sold with seasonal effects
+    base_units = case_when(
+      month %in% c(6, 7, 8) ~ rpois(n(), lambda = 45), # Summer boost
+      month %in% c(11, 12) ~ rpois(n(), lambda = 40), # Holiday season
+      month %in% c(1, 2) ~ rpois(n(), lambda = 25), # Post-holiday dip
+      TRUE ~ rpois(n(), lambda = 35) # Regular months
+    ),
+
+    # Product-specific adjustments
+    product_multiplier = case_when(
+      product == "Coca-Cola Classic" ~ runif(n(), 1.2, 1.8),
+      product == "Diet Coke" ~ runif(n(), 0.8, 1.2),
+      product == "Coke Zero" ~ runif(n(), 0.7, 1.1),
+      product == "Sprite" ~ runif(n(), 0.9, 1.3),
+      product == "Fanta Orange" ~ runif(n(), 0.6, 1.0),
+      product == "Coca-Cola Energy" ~ runif(n(), 0.3, 0.7),
+      TRUE ~ runif(n(), 0.8, 1.2)
+    ),
+
+    # Regional adjustments
+    region_multiplier = case_when(
+      region == "North America" ~ runif(n(), 1.3, 1.7),
+      region == "Europe" ~ runif(n(), 1.1, 1.4),
+      region == "Asia Pacific" ~ runif(n(), 1.0, 1.3),
+      region == "Latin America" ~ runif(n(), 0.8, 1.1),
+      TRUE ~ runif(n(), 0.6, 0.9)
+    ),
+
+    # Store type effects
+    store_multiplier = case_when(
+      store_type == "Supermarket" ~ runif(n(), 1.5, 2.5),
+      store_type == "Convenience Store" ~ runif(n(), 0.8, 1.5),
+      store_type == "Restaurant" ~ runif(n(), 1.0, 1.8),
+      store_type == "Vending Machine" ~ runif(n(), 0.3, 0.8),
+      TRUE ~ runif(n(), 0.7, 1.3)
+    ),
+
+    # Year-over-year growth
+    growth_factor = case_when(
+      year == 2021 ~ 1.0,
+      year == 2022 ~ runif(n(), 1.05, 1.15),
+      year == 2023 ~ runif(n(), 1.08, 1.20)
+    ),
+
+    # Calculate final units sold
+    units_sold = pmax(
+      1,
+      round(
+        base_units *
+          product_multiplier *
+          region_multiplier *
+          store_multiplier *
+          growth_factor
+      )
+    )
+  )
+```
+
+### Pricing Logic
+
+```{r pricing}
+coca_cola_sales <- coca_cola_sales |>
+  mutate(
+    # Unit prices with some variation and outliers
+    base_price = case_when(
+      product == "Coca-Cola Classic" ~ runif(n(), 1.20, 1.80),
+      product == "Diet Coke" ~ runif(n(), 1.25, 1.85),
+      product == "Coke Zero" ~ runif(n(), 1.25, 1.85),
+      product == "Sprite" ~ runif(n(), 1.15, 1.75),
+      product == "Fanta Orange" ~ runif(n(), 1.10, 1.70),
+      product == "Coca-Cola Energy" ~ runif(n(), 2.50, 3.50),
+      TRUE ~ runif(n(), 0.80, 1.20)
+    ),
+
+    # Add price variation by region and store type
+    unit_price = base_price *
+      case_when(
+        region == "North America" ~ runif(n(), 1.1, 1.3),
+        region == "Europe" ~ runif(n(), 1.2, 1.4),
+        TRUE ~ runif(n(), 0.8, 1.1)
+      ) *
+      case_when(
+        store_type == "Vending Machine" ~ runif(n(), 1.3, 1.6),
+        store_type == "Restaurant" ~ runif(n(), 1.4, 1.8),
+        TRUE ~ runif(n(), 0.9, 1.1)
+      )
+  )
+```
+
+### Promotions and Final Calculations
+
+```{r promotions}
+coca_cola_sales <- coca_cola_sales |>
+  mutate(
+    # Promotional campaigns (40% of records)
+    promotion = sample(
+      c("None", "Summer Sale", "BOGO", "Holiday Special", "New Product Launch"),
+      n_records,
+      replace = TRUE,
+      prob = c(0.6, 0.15, 0.12, 0.08, 0.05)
+    ),
+
+    # Apply promotion discounts
+    unit_price = if_else(
+      promotion != "None",
+      unit_price * runif(n(), 0.85, 0.95),
+      unit_price
+    ),
+
+    # Calculate revenue
+    revenue = units_sold * unit_price
+  ) |>
+  # Clean up temporary columns
+  select(
+    date,
+    product,
+    region,
+    store_type,
+    store_id,
+    units_sold,
+    unit_price,
+    revenue,
+    promotion
+  )
+```
+
+## Save Clean Dataset
+
+First, let's save the clean version of the dataset without any data quality issues.
+
+```{r save-clean}
+# Save clean dataset
+coca_cola_sales_clean <- coca_cola_sales
+write.csv(coca_cola_sales_clean, "coca_cola_sales_data_clean.csv", row.names = FALSE)
+cat("Clean dataset saved as 'coca_cola_sales_data_clean.csv'\n")
+```
+
+## Introduce Data Quality Issues
+
+These issues are intentionally added to practice data validation and cleaning techniques. We'll create a copy with issues while preserving the clean version.
+
+```{r create-dirty-copy}
+# Create a copy for introducing data quality issues
+coca_cola_sales_dirty <- coca_cola_sales_clean
+```
+
+### Missing Data
+
+```{r missing-data}
+# 1. Missing dates (2% of records)
+missing_date_indices <- sample(
+  nrow(coca_cola_sales_dirty),
+  round(nrow(coca_cola_sales_dirty) * 0.02)
+)
+coca_cola_sales_dirty$date[missing_date_indices] <- NA
+
+# 2. Missing promotion data (5% of records)
+missing_promo_indices <- sample(
+  nrow(coca_cola_sales_dirty),
+  round(nrow(coca_cola_sales_dirty) * 0.05)
+)
+coca_cola_sales_dirty$promotion[missing_promo_indices] <- NA
+```
+
+### Data Entry Errors
+
+```{r data-errors}
+# 3. Negative units sold (data entry errors - 0.5% of records)
+negative_units_indices <- sample(
+  nrow(coca_cola_sales_dirty),
+  round(nrow(coca_cola_sales_dirty) * 0.005)
+)
+coca_cola_sales_dirty$units_sold[
+  negative_units_indices
+] <- -abs(coca_cola_sales_dirty$units_sold[negative_units_indices])
+
+# 4. Extreme unit prices (pricing errors - 1% of records)
+extreme_price_indices <- sample(
+  nrow(coca_cola_sales_dirty),
+  round(nrow(coca_cola_sales_dirty) * 0.01)
+)
+coca_cola_sales_dirty$unit_price[extreme_price_indices] <- sample(
+  c(0.01, 0.05, 15.00, 25.00, 100.00),
+  length(extreme_price_indices),
+  replace = TRUE
+)
+
+# 5. Revenue calculation errors (0.3% of records)
+revenue_error_indices <- sample(
+  nrow(coca_cola_sales_dirty),
+  round(nrow(coca_cola_sales_dirty) * 0.003)
+)
+coca_cola_sales_dirty$revenue[revenue_error_indices] <- coca_cola_sales_dirty$revenue[
+  revenue_error_indices
+] *
+  sample(c(0.1, 2.5, 10), length(revenue_error_indices), replace = TRUE)
+```
+
+## Dataset Summary
+
+### Clean Dataset Summary
+
+```{r summary-clean}
+# Display clean dataset summary
+cat("Clean Coca-Cola Sales Dataset:\n")
+cat("Records:", nrow(coca_cola_sales_clean), "\n")
+cat(
+  "Date range:",
+  as.character(min(coca_cola_sales_clean$date, na.rm = TRUE)),
+  "to",
+  as.character(max(coca_cola_sales_clean$date, na.rm = TRUE)),
+  "\n"
+)
+cat("Products:", length(unique(coca_cola_sales_clean$product)), "\n")
+cat("Regions:", length(unique(coca_cola_sales_clean$region)), "\n")
+```
+
+### Dirty Dataset Summary
+
+```{r summary-dirty}
+# Display dirty dataset summary
+cat("\nDirty Coca-Cola Sales Dataset:\n")
+cat("Records:", nrow(coca_cola_sales_dirty), "\n")
+cat(
+  "Date range:",
+  as.character(min(coca_cola_sales_dirty$date, na.rm = TRUE)),
+  "to",
+  as.character(max(coca_cola_sales_dirty$date, na.rm = TRUE)),
+  "\n"
+)
+cat("Products:", length(unique(coca_cola_sales_dirty$product)), "\n")
+cat("Regions:", length(unique(coca_cola_sales_dirty$region)), "\n")
+```
+
+### Data Quality Issues Summary
+
+```{r quality-issues}
+# Show data quality issues summary for dirty dataset
+cat("\nBuilt-in Data Quality Issues (Dirty Dataset):\n")
+cat("Missing dates:", sum(is.na(coca_cola_sales_dirty$date)), "\n")
+cat("Missing promotions:", sum(is.na(coca_cola_sales_dirty$promotion)), "\n")
+cat(
+  "Negative units sold:",
+  sum(coca_cola_sales_dirty$units_sold < 0, na.rm = TRUE),
+  "\n"
+)
+cat(
+  "Extreme prices:",
+  sum(
+    coca_cola_sales_dirty$unit_price > 10 | coca_cola_sales_dirty$unit_price < 0.5,
+    na.rm = TRUE
+  ),
+  "\n"
+)
+
+# Show clean dataset has no issues
+cat("\nClean Dataset Quality Check:\n")
+cat("Missing dates:", sum(is.na(coca_cola_sales_clean$date)), "\n")
+cat("Missing promotions:", sum(is.na(coca_cola_sales_clean$promotion)), "\n")
+cat(
+  "Negative units sold:",
+  sum(coca_cola_sales_clean$units_sold < 0, na.rm = TRUE),
+  "\n"
+)
+cat(
+  "Extreme prices:",
+  sum(
+    coca_cola_sales_clean$unit_price > 10 | coca_cola_sales_clean$unit_price < 0.5,
+    na.rm = TRUE
+  ),
+  "\n"
+)
+```
+
+## Data Preview
+
+### Clean Dataset Preview
+
+```{r preview-clean}
+# Preview the clean dataset
+cat("Clean Dataset Sample:\n")
+head(coca_cola_sales_clean, 10)
+```
+
+### Dirty Dataset Preview
+
+```{r preview-dirty}
+# Preview the dirty dataset
+cat("\nDirty Dataset Sample (with quality issues):\n")
+head(coca_cola_sales_dirty, 10)
+```
+
+## Export Dataset
+
+```{r export}
+# Save dirty dataset to CSV (for backward compatibility)
+write.csv(coca_cola_sales_dirty, "coca_cola_sales_data.csv", row.names = FALSE)
+cat("\nDirty dataset saved as 'coca_cola_sales_data.csv'\n")
+cat("Clean dataset already saved as 'coca_cola_sales_data_clean.csv'\n")
+```
+
+## Notes
+
+This script generates two versions of the Coca-Cola sales dataset:
+
+### Clean Dataset (`coca_cola_sales_data_clean.csv`)
+
+-   Perfect data quality with no issues
+-   Ready for analysis and modeling
+-   Contains all business logic and patterns
+
+### Dirty Dataset (`coca_cola_sales_data.csv`)
+
+-   Contains intentional data quality issues for practice
+-   Use this version to practice data validation and cleaning
+
+### Both datasets include:
+
+-   **Seasonal patterns**: Higher sales in summer and holiday seasons
+-   **Product mix**: Coca-Cola Classic dominates with 40% market share
+-   **Regional variations**: North America has the highest sales volumes
+-   **Store type effects**: Supermarkets have higher volume sales
+-   **Growth trends**: Year-over-year growth from 2021-2023
+
+### Intentional data quality issues (dirty dataset only):
+
+-   Missing dates (2%)
+-   Missing promotion data (5%)
+-   Negative units sold (0.5%)
+-   Extreme pricing errors (1%)
+-   Revenue calculation errors (0.3%)
