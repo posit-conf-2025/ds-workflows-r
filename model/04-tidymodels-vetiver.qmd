@@ -337,3 +337,143 @@ predict(endpoint,
 ```
 
 🛑 Stop here!
+
+## Task 4 - Version and Monitor Model
+
+Creating a model is an iterative process, and chances are you'll create multiple versions of your model along the way. You may even create a completely different model to address the same question. How then can you keep track of all these versions, and ensure that you're always using the best model for the job? Vetiver to the rescue 🦸!
+
+Before we get started, we first need to make sure that the board we are using to pin our models can accommodate versioning. Fortunately, most boards, including Posit Connect, leverage versioning by default. If you want to explicitly turn on versions, just make sure you use the `versioned` argument when defining your board: `board_connect(versioned = TRUE)`.
+
+Monitoring a model means you are assessing performance as new data comes in over time. During task 1, we pulled out the bottom 500 rows from our dataset, and saved it to the `monitoring_data` variable. This will simulate the "new" data for model monitoring!
+
+🔄 Tasks
+
+-   List model versions.
+
+-   Monitor model performance using *new* sales data.
+
+#### List Model Versions
+
+We only have 1 version of our model, but let's list it anyway by using the `pin_versions()` function. Take note of the **version number (first column)!**
+
+```{r}
+#| label: list-pin-versions
+
+# View versions of your model 
+#  Replace "____" with your username 
+pin_versions(board = board, name = "ryan/coca_cola_revenue_model")
+
+# We can also extract some metadata from the pin
+pin_meta(board = board, name = "ryan/coca_cola_revenue_model")$description
+```
+
+#### Create Another Model (Random forest)
+
+Let's create another model to answer the same question as our logistic regression model: can we predict coca-cola sales revenue? The below code cell will create, train, and assess the performance of a regression model using the random forest engine. This model will be used to compare against our first model.
+
+```{r}
+#| label: create-rf-model
+
+# Create a model using the random forest engine
+library(parsnip)
+linear_model_rf <- rand_forest(
+  mode = "regression",
+  trees = 100
+) |>
+  set_engine("ranger")
+
+# Create a workflow
+revenue_workflow_rf <- workflow() |> 
+  add_recipe(revenue_recipe) |> 
+  add_model(linear_model_rf)
+
+# Train the model
+cat("Training Random Forest model...\n")
+fitted_model_rf <- revenue_workflow_rf |> 
+  fit(data = train_data)
+cat("Random Forest model training complete!\n")
+
+# Make predictions on test set
+predictions_rf <- fitted_model_rf |>
+  predict(test_data) |>
+  bind_cols(test_data)
+
+# Calculate model performance
+model_metrics_rf <- predictions_rf |>
+  metrics(truth = revenue, estimate = .pred)
+
+cat("\nRandom Forest Model Performance:\n")
+print(model_metrics_rf)
+```
+
+#### Pin the random forest model to Posit Connect
+Now that we have a new model, we can pin it to Posit Connect as well. This will allow us to version the model and monitor its performance over time. We'll pin it using the `vetiver` package to the same location as our previous model.
+
+```{r}
+#| label: pin-rf-model
+
+# Create a vetiver model
+vetiver_model_rf <- vetiver_model(
+  model = fitted_model_rf,
+  model_name = "coca_cola_revenue_model"
+)
+
+# Write Vetiver Model
+board |> vetiver_pin_write(vetiver_model_rf)
+
+# View versions of your model
+pin_versions(board = board, name = "ryan/coca_cola_revenue_model")
+
+# We can also extract some metadata from the pin
+pin_meta(board = board, name = "ryan/coca_cola_revenue_model")$description
+```
+
+#### Monitor Model Performance
+
+How do we know which model is performing better? Logistic regression or random forests? That's where model monitoring comes into play.
+
+❗Be sure add in the version number as a string (eg. "557741").
+
+```{r}
+#| label: monitor-model-performance
+
+# Read in monitoring data
+monitoring_data <- read_csv("data/coca_cola_sales_monitoring_data.csv")
+
+# Load the vetiver model
+vetiver_model_lm <- vetiver_pin_read(board, "ryan/coca_cola_revenue_model", version = "757597")
+
+# Load the vetiver model rf
+vetiver_model_rf <- vetiver_pin_read(board, "ryan/coca_cola_revenue_model", version = "757619")
+
+# Compute metrics for the logistic regression model
+sales_revenue_metrics_lm <-
+    augment(vetiver_model_lm, new_data = arrange(monitoring_data, date)) |> 
+    vetiver_compute_metrics(
+      date_var = date,
+      period = "week",
+      truth = revenue,
+      estimate = .pred
+    )
+
+# Compute metrics for the rf model
+sales_revenue_metrics_rf <-
+    augment(vetiver_model_rf, new_data = arrange(monitoring_data, date)) |> 
+    vetiver_compute_metrics(
+      date_var = date,
+      period = "week",
+      truth = revenue,
+      estimate = .pred
+    )
+
+# Plot the metrics for the logistic regression model
+vetiver_plot_metrics(sales_revenue_metrics_lm) +
+  scale_size(range = c(2, 4)) +
+  labs(title = pin_meta(board = board, "ryan/coca_cola_revenue_model", version = "757597")$description)
+
+# Plot the metrics for the GLM model
+vetiver_plot_metrics(sales_revenue_metrics_rf) +
+  scale_size(range = c(2, 4)) +
+  labs(title = pin_meta(board = board, "ryan/coca_cola_revenue_model", version = "757619")$description)
+
+```
