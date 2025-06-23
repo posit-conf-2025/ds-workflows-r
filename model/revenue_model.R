@@ -1,20 +1,20 @@
 # Simple Revenue Prediction Model
-# Using tidymodels to predict revenue from coca cola sales data
+# Using tidymodels to predict revenue from posit cola sales data
 
 library(tidymodels)
 library(dplyr)
 library(readr)
 
 # Load the clean dataset
-coca_cola_data <- read_csv("coca_cola_sales_data_clean.csv")
+posit_cola_data <- read_csv("posit_cola_sales_data_clean.csv")
 
 # Simple data exploration
-cat("Dataset dimensions:", nrow(coca_cola_data), "x", ncol(coca_cola_data), "\n")
-cat("Revenue range: $", round(min(coca_cola_data$revenue), 2), 
-    " to $", round(max(coca_cola_data$revenue), 2), "\n")
+cat("Dataset dimensions:", nrow(posit_cola_data), "x", ncol(posit_cola_data), "\n")
+cat("Revenue range: $", round(min(posit_cola_data$revenue), 2), 
+    " to $", round(max(posit_cola_data$revenue), 2), "\n")
 
 # Prepare the data for modeling
-model_data <- coca_cola_data %>%
+model_data <- posit_cola_data %>%
   select(units_sold, unit_price, product, region, store_type, revenue) %>%
   # Convert character variables to factors
   mutate(
@@ -108,7 +108,7 @@ predict_revenue <- function(units_sold, unit_price, product, region, store_type)
 test_prediction <- predict_revenue(
   units_sold = 50,
   unit_price = 1.50,
-  product = "Coca-Cola Classic",
+  product = "Posit Classic",
   region = "North America",
   store_type = "Supermarket"
 )

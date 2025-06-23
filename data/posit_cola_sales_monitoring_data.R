@@ -1,4 +1,4 @@
-# Create monitoring dataset that matches coca_cola_sales_clean structure
+# Create monitoring dataset that matches posit_cola_sales_clean structure
 library(dplyr)
 library(lubridate)
 
@@ -8,15 +8,15 @@ set.seed(456)  # Different seed for monitoring data
 # Create monitoring dataset (1000 rows)
 n_monitoring <- 1000
 
-# Match the exact structure of coca_cola_sales_clean
+# Match the exact structure of posit_cola_sales_clean
 monitoring_data <- tibble(
   # Recent dates (simulating new data for 2024)
   date = sample(seq(as.Date("2024-01-01"), as.Date("2024-06-30"), by = "day"), 
                 n_monitoring, replace = TRUE),
   
   # Same products with slight distribution changes
-  product = sample(c("Coca-Cola Classic", "Diet Coke", "Coke Zero", "Sprite", 
-                    "Fanta Orange", "Coca-Cola Energy", "Dasani Water"), 
+  product = sample(c("Posit Classic", "Posit Zero", "Posit Lite", "Quarto Fizz", 
+                    "Connect Orange", "Workbench Energy", "Cloud Water"), 
                   n_monitoring, replace = TRUE, 
                   prob = c(0.38, 0.16, 0.16, 0.13, 0.09, 0.04, 0.04)),
   
@@ -47,7 +47,7 @@ monitoring_data <- tibble(
     
     # Product-specific adjustments (with slight market evolution)
     product_multiplier = case_when(
-      product == "Coca-Cola Classic" ~ runif(n(), 1.1, 1.7),  # Slight decline
+      product == "Posit Classic" ~ runif(n(), 1.1, 1.7),  # Slight decline
       product == "Diet Coke" ~ runif(n(), 0.85, 1.25),        # Slight growth
       product == "Coke Zero" ~ runif(n(), 0.75, 1.15),        # Growth
       product == "Sprite" ~ runif(n(), 0.95, 1.35),           # Stable
@@ -138,5 +138,5 @@ cat("\nFirst 10 rows:\n")
 head(monitoring_data, 10)
 
 # Save the monitoring dataset
-write.csv(monitoring_data, "data/coca_cola_sales_monitoring_data.csv", row.names = FALSE)
+write.csv(monitoring_data, "data/posit_cola_sales_monitoring_data.csv", row.names = FALSE)
 cat("\nMonitoring dataset saved as 'data/coca_cola_sales_monitoring_data.csv'\n")

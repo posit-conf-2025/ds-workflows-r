@@ -36,10 +36,10 @@ predict_revenue <- function(units_sold, unit_price, product, region, store_type)
 
 # Define UI with bslib theme
 ui <- page_sidebar(
-  title = "🥤 Coca-Cola Revenue Predictor",
+  title = "🥤 Posit Cola Revenue Predictor",
   theme = bs_theme(
     bootswatch = "flatly",
-    primary = "#dc3545",  # Coca-Cola red
+    primary = "#4A90E2",  # Posit blue
     base_font = font_google("Inter"),
     heading_font = font_google("Inter", wght = 600)
   ),
@@ -52,8 +52,8 @@ ui <- page_sidebar(
       card_header("Product Details"),
       selectInput("product",
                   "Product:",
-                  choices = c("Coca-Cola Classic", "Coke Zero", "Coca-Cola Energy", "Sprite"),
-                  selected = "Coca-Cola Classic"),
+                  choices = c("Posit Classic", "Posit Lite", "Workbench Energy", "Quarto Fizz"),
+                  selected = "Posit Classic"),
       
       selectInput("region",
                   "Region:",
@@ -129,7 +129,7 @@ ui <- page_sidebar(
   hr(),
   div(
     class = "text-muted small text-center",
-    p("This app calls the Coca-Cola revenue prediction API (deployed via vetiver) to predict revenue based on the input parameters."),
+    p("This app calls the Posit Cola revenue prediction API (deployed via vetiver) to predict revenue based on the input parameters."),
     p(strong("Note:"), "Make sure the CONNECT_API_KEY environment variable is set to use the API.")
   )
 )
