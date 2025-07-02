@@ -11,13 +11,13 @@ API_URL <- "https://connect.posit.it/content/127ec7f3-d930-4f52-8f49-52b03f0c025
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
 # Create vetiver endpoint
-endpoint <- vetiver_endpoint(API_URL)
+endpoint <- vetiver::vetiver_endpoint(API_URL)
 
 # Define prediction function that calls the API
 predict_revenue <- function(units_sold, unit_price, product, region, store_type) {
 
   # Prepare the data for API request
-  request_data <- tibble(
+  request_data <- tibble::tibble(
       units_sold = units_sold,
       unit_price = unit_price,
       product = product,
@@ -35,7 +35,7 @@ predict_revenue <- function(units_sold, unit_price, product, region, store_type)
 
 
 # Define UI with bslib theme
-ui <- page_sidebar(
+ui <- bslib::page_sidebar(
   title = "🥤 Posit Cola Revenue Predictor",
   theme = bs_theme(
     bootswatch = "flatly",
@@ -138,15 +138,15 @@ ui <- page_sidebar(
 server <- function(input, output) {
 
   # Reactive value to store the text to be displayed for predicted revenue
-  display_revenue_text <- reactiveVal("Click 'Predict Revenue' to see prediction")
+  display_revenue_text <- shiny::reactiveVal("Click 'Predict Revenue' to see prediction")
 
   # Watch for input changes: reset the displayed text to the initial message
-  observeEvent(list(input$units_sold, input$unit_price, input$product, input$region, input$store_type), {
+  shiny::observeEvent(list(input$units_sold, input$unit_price, input$product, input$region, input$store_type), {
     display_revenue_text("Click 'Predict Revenue' to see prediction")
   }, ignoreNULL = FALSE) # ignoreNULL = FALSE ensures it fires on initial load too
 
   # Handle predict button click
-  observeEvent(input$predict, {
+  shiny::observeEvent(input$predict, {
     # Immediately show "Predicting..." while the calculation is in progress
     display_revenue_text("Predicting...")
 
@@ -175,12 +175,12 @@ server <- function(input, output) {
   })
 
   # Display predicted revenue: simply output the value from the reactiveVal
-  output$predicted_revenue <- renderText({
+  output$predicted_revenue <- shiny::renderText({
     display_revenue_text()
   })
 
   # Display input summary
-  output$input_summary <- renderTable({
+  output$input_summary <- shiny::renderTable({
     current_text <- display_revenue_text()
     # Only show the input summary if a valid prediction has been made
     if (current_text == "Click 'Predict Revenue' to see prediction" ||
@@ -203,4 +203,4 @@ server <- function(input, output) {
 }
 
 # Run the application
-shinyApp(ui = ui, server = server)
+shiny::shinyApp(ui = ui, server = server)

@@ -1,0 +1,385 @@
+---
+execute: 
+  eval: true
+---
+
+## Effective Delivery of Insights {.title-slide-light}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/shiny.png?raw=true){.absolute top="200" left="50" width="260"} ![](https://pkgs.rstudio.com/connectapi/reference/figures/logo.svg){.absolute top="200" left="310" width="260"}
+
+## Review
+
+![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}
+
+## Section Agenda {.brackets-light}
+
+<br>
+
+-   Using Shiny to deliver interactive content
+-   Principles of Shiny in production
+-   Monitoring production content
+
+## Let's talk Shiny
+
+![](https://raw.githubusercontent.com/rstudio/hex-stickers/580e9bada770756d25dbd3696159744d1e9c9251/SVG/shiny.svg){.absolute style="padding-right: 15px;" left="600" top="10" width="200"} <br><br>
+
+::::::: columns
+:::: {.column width="50%"}
+::: fragment
+Whether you're here <br> in your Shiny journey:
+
+![](slide_resources/andriyko-podilnyk-RCfi7vgJjUY-unsplash.jpg) <br>[Photo by <a href="https://unsplash.com/@andriyko?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Andriyko Podilnyk</a> on <a href="https://unsplash.com/photos/orange-tabby-kitten-in-grasses-RCfi7vgJjUY?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>]{.smallest}
+:::
+::::
+
+:::: {.column width="50%"}
+::: fragment
+<br> Or here:
+
+![](slide_resources/francesco-ZxNKxnR32Ng-unsplash.jpg)
+
+[Photo by <a href="https://unsplash.com/@detpho?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Francesco</a> on <a href="https://unsplash.com/photos/ZxNKxnR32Ng?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>]{.smallest}
+:::
+::::
+:::::::
+
+## 🧰 Shiny resources
+
+-   Get started with Shiny (R or Python!) <https://shiny.posit.co/getstarted>
+-   Gallery of examples <https://shiny.posit.co/r/gallery/>
+-   **The authoritative reference, Mastering Shiny** <https://mastering-shiny.org>
+-   Helper packages
+    -   [`bslib`](https://rstudio.github.io/bslib/) - add themes, components, and layouts with ease
+    -   [`thematic`](https://rstudio.github.io/thematic/) - extends your Shiny theme to plots\
+    -   [`shinyuieditor`](https://rstudio.github.io/shinyuieditor/index.html#trouble-installing/) - a visual tool to help create the UI portion of your Shiny app
+
+## Shiny in production
+
+<br> "But my app runs great on my laptop..." <br><br>
+
+::: fragment
+Two sides to this coin:
+
+1.  Optimize your app
+2.  Tune your runtime settings
+:::
+
+## Shiny in production --- Optimize your app
+
+<br>
+
+📣 Design principle: Make your app a lightweight presentation layer <br><br>
+
+:::::::: columns
+::::::: fragment
+:::: {.column width="45%"}
+{{< bi sign-turn-right-fill color=orange >}} Performance workflow:
+
+::: smaller
+-   Add logging to app, either basic `message` statements or use [`log4r`](https://github.com/johnmyleswhite/log4r) package
+-   use [`shinyloadtest`](https://rstudio.github.io/shinyloadtest/) to simulate app performance under load
+-   use [`profvis`](https://rstudio.github.io/profvis/) to profile your app to identify bottlenecks
+-   Optimize app (in order of value-add):
+    -   Move work upstream out of Shiny
+    -   Make code faster
+    -   Use caching
+    -   Use async
+:::
+::::
+
+:::: {.column width="50%"}
+::: {style="background: #F6F6F6; width: 600px; height: 400px; margin: 20px; padding: 20px; box-shadow: 0 18px 18px -9px lightgray; margin-left: auto; margin-right: auto;"}
+🧰 References:
+
+-   Joe Cheng's [Shiny in Production](https://youtu.be/Wy3TY0gOmJw) talk at 2019 rstudio::conf
+-   [Mastering Shiny, Performance](https://mastering-shiny.org/performance.html) chapter
+:::
+::::
+:::::::
+::::::::
+
+## What does our Ferry Delay App need to do?
+
+::: fragment
+-   Make requests to our API
+:::
+
+::: fragment
+-   Receive and display API response
+:::
+
+:::: fragment
+::: {.callout-note icon="false"}
+## Activity
+
+👉 Activity objective: explore the simply shiny app.
+
+-   Open the project `materials/05-shiny-app/05-shiny-app.Rproj`
+-   Open the file `simple_ferry_app/app.R`
+-   Click `Run App` and explore the shiny app.
+
+Get a taste for how shiny can be used to create **reactive** API queries!
+:::
+::::
+
+## Putting the Pieces Together
+
+Our Shiny application does a bit more:
+
+::: incremental
+1.  Read in the validated ferry-weather data from database.
+2.  Extract ferry station information from `ferryfairy` package.
+3.  Take in user inputs.
+4.  Make API queries.
+5.  Display API response.
+6.  Display a map.
+7.  Show average delay times.
+:::
+
+## Putting the Pieces Together
+
+Our Shiny application does a bit more:
+
+1.  Read in the validated ferry-weather data from database.
+2.  Extract ferry station information from `ferryfairy` package.
+3.  Take in user inputs.
+4.  **Make API queries.**
+5.  Display API response.
+6.  Display a map.
+7.  Show average delay times.
+
+::: fragment
+📣 This Shiny application does not train a model! Move the *computationally heavy* stuff outside of your applications!
+:::
+
+## Activity
+
+::: {.callout-note icon="false"}
+👉 Activity objective: explore the simply shiny app.
+
+-   Open the project `materials/05-shiny-app/05-shiny-app.Rproj`
+-   Open the file `ferry_delay_app/app.R`
+-   Supply your API URL to the Shiny App.
+-   Deploy to Posit Connect!
+:::
+
+## Git-Backed Deployment
+
+🤔 What happens when you need to make a change to the Shiny Application?
+
+<br>
+
+::: fragment
+What if we deployed directly from the GitHub Repo?
+:::
+
+<br>
+
+::: fragment
+**Advantages:**
+
+1.  Great for collaborative work.
+2.  Connect automatically detects changes in repo and rebuilds content.
+3.  📣 All production content should be deployed using git/CI-CD!
+:::
+
+:::: fragment
+::: callout-note
+## Show and Tell
+
+Let's show you how to deploy a Shiny App (our simple Ferry app) to Posit Connect using Git Backed Deployment.
+:::
+::::
+
+## Shiny on Connect
+
+Runtime settings
+
+::::::: columns
+::: {.column width="30%"}
+![](slide_resources/runtime_settings.png)
+:::
+
+::::: {.column width="70%"}
+:::: r-stack
+![](https://media.giphy.com/media/3o6Mbsras7qdAwgABW/giphy.gif){.fragment .fade-in-then-out fig-align="center"}
+
+![](https://media.giphy.com/media/lvlLuc2zhi39C/giphy.gif){.fragment .fade-in-then-out fig-align="center"}
+
+::: fragment
+**Min processes** --- Keep a process running on the server at all times?
+
+**Max processes** --- Put a bound on the number of processes spawned?
+
+**Connections per process** --- [A connection = a browser tab]{.positteal}. How many connections will share the same process? Call this **n**
+
+**Load factor** --- Much like *min processes*, how early do you want to start a new process for that **n + 1** connection?
+:::
+::::
+:::::
+:::::::
+
+## Posit Connect
+
+The Shiny Restaurant Analogy
+
+Let's say you are the **manager** of a restaurant, and you need to determine two things:
+
+1.  How many chefs should I hire?
+2.  How many customers can I accommodate at once?
+
+::: fragment
+-   Chef == [**process**]{.positgreen}
+-   Customer == [**connection**]{.positgreen}
+:::
+
+## Posit Connect
+
+The Shiny Restaurant Analogy
+
+::::::: r-stack
+::: fragment
+![](slide_resources/chef-1.jpg)
+:::
+
+::: fragment
+![](slide_resources/chef-2.jpg)
+:::
+
+::: fragment
+![](slide_resources/chef-3.jpg)
+:::
+
+::: fragment
+![](slide_resources/chef-4.jpg)
+:::
+:::::::
+
+## A question for you...
+
+What components of our workflow deployed to Posit Connect would benefit from setting `Min Processes` to > 0?
+
+![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}
+
+##  {.brackets-green}
+
+::: section-title-dark
+Monitoring Content
+:::
+
+## How will I know if people are consuming my content?
+
+::: fragment
+<br>
+
+🧰 Posit Connect Server API
+:::
+
+## Posit Connect Server API endpoints
+
+*Most endpoints require an API Key*, and [**results will be scoped to the permissions of the key**]{.positgreen}. <br>
+
+::::: columns
+::: {.column width="50%"}
+**Helpful to publishers:**
+
+-   List/Update content
+-   Get content details
+-   Set environment variables
+-   Change permissions
+-   Manage content tags
+-   Manage content custom URL
+-   [✨ Content usage ✨]{.positteal}
+:::
+
+::: {.column width="50%"}
+**Helpful to admins:**
+
+-   👈 all that
+-   Audit logs
+-   User and group management
+-   Job management
+:::
+:::::
+
+<br> Full documentation: <https://docs.posit.co/connect/api/>
+
+## Accessing the Connect Server API{.brackets-light}
+
+-   Posit SDKs provide wrappers around `curl` and HTTP requests for easier interaction:
+    -   [`{connectapi}`](https://pkgs.rstudio.com/connectapi/) R package
+    -   [`{posit-sdk}`]() python package
+
+![](https://pkgs.rstudio.com/connectapi/reference/figures/logo.svg){.absolute top="340" right="260" width="290"}
+
+:::::: {.columns}
+::: {.column}
+:::{.callout-tip title="Remember"}
+Content returned from the Connect Server API will be scoped to the API key provided.
+:::
+:::
+::: {.column}
+:::
+::: 
+
+## 
+
+::: center
+<h2><br>**Activity Time!**</h2>
+:::
+
+::: {.callout-note icon="false"}
+## Activity
+
+👉 Activity objective: Explore the Posit SDK `{connectapi}` via the Connect Cookbook
+
+-   Browse the [Connect Cookbook](https://docs.posit.co/connect/cookbook)
+-   Open the project `materials/06-usage-monitoring/06-usage-monitoring.Rproj`
+-   Open the file `_simple-sdk-example.qmd`
+-   We'll work through this file together
+:::
+
+
+
+## Who is Using our App?
+
+<https://pub.ferryland.posit.team/r/usage_monitoring/>
+
+[![](slide_resources/sample_usage_dashboard.png){fig-align="center" height="750"}](https://pub.ferryland.posit.team/r/usage_monitoring/)
+
+## 
+
+::: center
+<h2><br>**Optional Activity**</h2>
+:::
+
+::: {.callout-note icon="false"}
+## Activity
+
+👉 Activity objective: Deploy a ready-made usage dashboard, provided from the Connect Cookbook
+
+-   Return to the project `materials/06-usage-monitoring/06-usage-monitoring.Rproj`
+-   Open the file `06-usage-monitoring.qmd`
+-   Deploy this file to Connect 
+:::
+
+## How can I know what people are doing in my content?
+
+- 👉 As we just saw, Connect aggregates higher-level content access information
+- {{< bi sign-turn-right-fill color=orange >}} Add tracking or logging to the content itself for user interaction information
+
+:::{.fragment}
+
+Ideas and resources:
+
+:::{.smaller}
+
+- Add logging to your app for benchmarking, performance tracking, debugging, and/or tracking actions
+  - output to STDOUT/STDERR and see in the Connect app logs (example in our [Ferry Delay App](https://github.com/posit-conf-2025/ds-workflows-r/blob/main/materials/05-shiny-app/ferry_delay_app/app.R))
+  - use a structured logging package like `{log4r}` and export to a log aggregator
+- Add Google Analytics: <https://shiny.posit.co/r/articles/build/google-analytics/>
+- Monitor User Behavior in Shiny Apps with Hotjar: <https://www.r-bloggers.com/2022/06/r-shiny-hotjar-how-to-monitor-user-behavior-in-r-shiny-apps/>
+- Article summarizing tools for tracking <https://www.appsilon.com/post/monitoring-r-shiny-user-adoption>
+:::
+
+:::

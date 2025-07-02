@@ -1,0 +1,319 @@
+---
+execute: 
+  eval: false
+---
+
+## Tidymodels and Vetiver {.title-slide-light}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/tidymodels.png?raw=true){.absolute top="200" left="50" width="260"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/vetiver.png?raw=true){.absolute top="200" left="310" width="260"}
+
+## Section Agenda {.brackets-dark-teal}
+
+-   Goal of Ferry Delay Prediction Model
+
+-   Tidymodels
+
+    -   Assignment - Create a tidymodel
+
+-   Vetiver
+
+    -   Pins and Plumber
+    -   Assignment - Deploy and monitor your tidymodel
+
+## {{< bi sign-turn-right-fill color=orange >}} Disclaimer
+
+<br>
+
+::: {style="text-align: center; font-size: 200%; color: #EE6331"}
+THIS IS NOT A MODELING WORKSHOP!
+:::
+
+. . .
+
+<br>
+
+... but modeling is still super cool 😎 !
+
+## Review
+
+![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}
+
+## What's the Goal?
+
+::::: columns
+::: {.column width="50%"}
+![](slide_resources/data_model_meme.jpg){width="710"}
+:::
+
+::: {.column width="50%"}
+**What we have:**
+
+-   A ***beautiful - tidy - validated*** dataset
+
+    -   Ferry information and history
+
+    -   Weather data
+
+<br>
+
+**What do we want:**
+
+-   A <font color="#9A4665"> MODEL </font> that can *predict if a ferry will have a delayed departure*
+:::
+:::::
+
+## Where are we going
+
+![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}
+
+## Review - Washington State Ferry
+
+<br> ⛴️ [WSF is the largest operating public ferry system in the US! 🤯]{.posityellow}
+
+🐋 [21 ferries across Puget Sound and the Salish Sea]{.posityellow}
+
+::::: columns
+::: {.column width="15%"}
+![](slide_resources/vessel_classes.png){height="600"}
+:::
+
+::: {.column width="60%"}
+![](slide_resources/ferry-whales.png){height="600" fig-align="center"} [<https://i.pinimg.com/originals/c9/8b/3a/c98b3a997df52b6c8ad681590557c6bc.jpg>]{.figcaption2}
+:::
+
+::: {.column width="25%"}
+![](slide_resources/route_map.png){height="600"}
+:::
+
+:::::
+
+
+## Question and Answer
+
+:::: {.fragment fragment-index="3"}
+::: {.callout-caution icon="false"}
+## The Question
+
+Can we help inform travelers about possible ferry delays?
+:::
+::::
+
+:::: {.fragment fragment-index="4"}
+::: {.callout-tip icon="false"}
+## The Answer
+
+Use the ferry-weather (validated) data to create a model that will predict delay status!
+:::
+::::
+
+## Introduction to Tidymodels {.content-light}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/tidymodels.png?raw=true){.absolute top="200" right="50" width="260"}
+
+<br>
+
+✋ If you have used `tidymodels` before?
+
+## Introduction to Tidymodels {.content-light}
+
+<br>
+
+Steps to create (most) models:
+
+::: incremental
+1.  Data - preprocessing?
+2.  Create a formula - what does the model do?
+3.  Define your model type - Linear regression, decision tree, xgboost, etc?
+4.  Train
+5.  Test
+6.  Predict
+:::
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/recipes.png?raw=true){.absolute top="100" right="300" width="150"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/parsnip.png?raw=true){.absolute top="100" right="450" width="150"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/workflows.png?raw=true){.absolute top="100" right="150" width="150"}
+
+## Introduction to Tidymodels {.content-light}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/recipes.png?raw=true){.absolute top="10" right="690" width="60"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/parsnip.png?raw=true){.absolute top="10" right="750" width="60"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/workflows.png?raw=true){.absolute top="10" right="630" width="60"}
+
+```{r}
+#| code-line-numbers: "3-5|7-8|10-11|13-14"
+
+library(tidymodels)
+
+# Create Recipe
+model_recipe <- recipes::recipe(what-to-predict ~ data-features, 
+                                data = your-data)
+
+# Define model using parsnip (e.x. linear regression)
+model_type <- parsnip::linear_reg()
+
+# Combine the two to create a workflow
+model_wflow <- workflows::workflow(model_recipe, model_type)
+
+# Fit workflow to data using parsnip
+model_fit <- parsnip::fit(model_wflow, your-data)
+```
+
+## Introduction to Tidymodels {.content-light}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/recipes.png?raw=true){.absolute top="10" right="690" width="60"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/parsnip.png?raw=true){.absolute top="10" right="750" width="60"} ![](https://github.com/rstudio/hex-stickers/blob/main/PNG/workflows.png?raw=true){.absolute top="10" right="630" width="60"}
+
+::: center
+<h2><br>**Activity Time!**</h2>
+:::
+
+::: {.callout-note icon="false"}
+## Activity
+
+-   Open the project `materials/04-tidymodels-vetiver/04-tidymodels-vetiver.Rproj`
+-   Open the file `04-tidymodels-vetiver.qmd`
+
+**Complete Tasks 0 & 1 only!**
+:::
+
+::: callout-important
+## Goal
+
+Build a model using `tidymodels`.
+:::
+
+## We have a model...now what 🤷 ?
+
+<br>
+
+We have two questions:
+
+1.  How can we **save** our model so others can use it?
+2.  How can we **serve** our model so others can interact with it?
+
+How do you save/share models?
+
+::: {.fragment .fade-up}
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/vetiver.png?raw=true){fig-align="center" width="309"}
+:::
+
+## Vetiver
+
+![](https://vetiver.rstudio.com/images/ml_ops_cycle.png){.absolute width="1000" top="70" right="300"}
+
+![](https://github.com/rstudio/pointblank/raw/main/man/figures/logo.svg){.absolute top="310" right="400" width="100"}
+
+<br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+
+-   Open source R (and Python) package.
+-   Deploy and maintain machine learning models --\> **MLOps**
+-   Provides tools to version, deploy, and monitor a trained model.
+
+## Introduction to Pins & Plumber
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/pins.png?raw=true){.absolute top="120" right="800" width="500"}
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/plumber.png?raw=true){.absolute top="120" right="300" width="500"}
+
+## 🧰 Pins
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/pins.png?raw=true){fig-align="center" width="120"}
+
+::: incremental
+-   Open source R (and Python) package.
+-   Publishes data, models, and other R objects, making it easy to share them across projects and with your colleagues.
+    -   {{< bi sign-turn-right-fill color=orange >}} **Interoperability --\>** You can share an object built in R with Python users (and vice versa)!
+-   For our workflow:
+    -   **How can we save our model so that others (or other content) can use it?**
+:::
+
+## Activity
+
+::: {.callout-note icon="false"}
+## Activity
+
+-   Open the project `materials/04-tidymodels-vetiver/04-tidymodels-vetiver.Rproj`
+-   Open the file `04-tidymodels-vetiver.qmd`
+
+**Complete Task 2 only!**
+:::
+
+::: callout-important
+## Goal
+
+Use `vetiver` to **pin** model to Posit Connect.
+:::
+
+## 🧰 Plumber
+
+![](https://github.com/rstudio/hex-stickers/blob/main/PNG/plumber.png?raw=true){fig-align="center" width="120"}
+
+::: incremental
+-   Open source R package.
+-   Create a web Application Programming Interface (**API**) using only R code!
+    -   {{< bi sign-turn-right-fill color=orange >}} **Interoperability --\>** You can interact with a Plumber API using Python (or any other language/HTTP client).
+-   For our workflow:
+    -   **How can we serve our model as an API?**
+:::
+
+## Activity
+
+::: {.callout-note icon="false"}
+## Activity
+
+-   Open the project `materials/04-tidymodels-vetiver/04-tidymodels-vetiver.Rproj`
+-   Open the file `04-tidymodels-vetiver.qmd`
+
+**Complete Task 3 only!**
+:::
+
+::: callout-important
+## Goal
+
+Use `vetiver` to **serve** the pinned model as an **API** to Posit Connect.
+:::
+
+## Version and Monitor your models
+
+<br>
+
+::: incremental
+-   Data changes over time
+-   Models change over time
+-   **How can I ensure I'm using the best model for the job?**
+:::
+
+::::: fragment
+::: {.callout-note icon="false"}
+## Activity
+
+-   Open the project `materials/04-tidymodels-vetiver/04-tidymodels-vetiver.Rproj`
+-   Open the file `04-tidymodels-vetiver.qmd`
+
+**Complete Task 4**
+:::
+
+::: callout-important
+## Goal
+
+Use `vetiver` to version and monitor your ferry predict model.
+:::
+:::::
+
+## Summary - Pins/Plumber
+
+![](slide_resources/pins_plumber.jpg){fig-align="center"}
+
+## Ferry Delay Prediction Model
+
+Training this model is relatively *fast*
+
+-   What if the model training is slow or the data is **REALLY** big?
+
+    -   {{< bi sign-turn-right-fill color=orange >}} Workbench Jobs allows you to run R/Python scripts in new sessions independent of your current RStudio Pro/VSCode session
+
+        ![](slide_resources/background_jobs.png){fig-align="center" width="344"}
+
+-   {{< bi sign-turn-right-fill color=orange >}} If you create a model, you should create a **model card!**
+
+    -   Check out a basic model card [here](https://pub.ferryland.posit.team/ferry_model_card_r/)!
+
+
+## Review
+
+![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}

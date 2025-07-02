@@ -91,5 +91,3 @@ We cover a lot of ground in this workshop. Below is a summary of the packages an
   - Azure Pipelines
   - Bitbucket Pipelines
   - Jenkins
-
-
