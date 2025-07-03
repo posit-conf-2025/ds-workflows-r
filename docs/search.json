@@ -90,5 +90,221 @@
     "title": "Data Science Workflows with Posit Tools - R focus",
     "section": "Reuse and licensing",
     "text": "Reuse and licensing\n\n This work is licensed under a Creative Commons Attribution 4.0 International License."
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#washington-state-ferry-depature-delays-project",
+    "href": "slides/01_workshop_and_project_intro.html#washington-state-ferry-depature-delays-project",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Washington State Ferry Depature Delays Project",
+    "text": "Washington State Ferry Depature Delays Project\n\n\n\nThe Question\n\n\nCan we predict departure delay for a given route and date?\n\n\n\n\n\n\nOur Approach\n\n\nUse the historical (validated) delay, location, and weather data to create a model that will predict the likelihood of delays!",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-data",
+    "href": "slides/01_workshop_and_project_intro.html#project-data",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project Data",
+    "text": "Project Data\nThis workshop will use data from two primary data sources:\n\n⛴︎ Ferry data (https://wsdot.wa.gov/traffic/api/)\n🌤️ Weather data (https://open-meteo.com/en/docs/historical-weather-api/)",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-data-details",
+    "href": "slides/01_workshop_and_project_intro.html#project-data-details",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project Data Details",
+    "text": "Project Data Details\n\n ⛴︎ Ferry data (https://wsdot.wa.gov/traffic/api/)\n\n\n\n\n\n\n\n\nData Set\nDescription\nAPI\n\n\n\n\nVessel verbose\nDetails about each ferry in the fleet, including name, model, and capacity\nhttps://www.wsdot.wa.gov/ferries/api/ vessels/rest/vesselverbose? apiaccesscode={WSDOT_ACCESS_CODE}\n\n\nVessel history\nHistorical sailings, including scheduled actual departure time\nhttps://www.wsdot.wa.gov/ferries/api/ vessels/rest/vesselhistory/ {VESSELNAME}/{DATESTART}/{DATEEND}? apiaccesscode={WSDOT_ACCESS_CODE}\n\n\nTerminal locations\nTerminal names and locations, including latitude and longitude\nhttps://www.wsdot.wa.gov/ferries/ api/terminals/rest/terminallocations? apiaccesscode={WSDOT_ACCESS_CODE}",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-data-details-1",
+    "href": "slides/01_workshop_and_project_intro.html#project-data-details-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project Data Details",
+    "text": "Project Data Details\n\n 🌤️ Weather data (https://open-meteo.com/en/docs/historical-weather-api/)\n\n\n\n\n\n\n\n\nEndpoint\nDescription\nAPI\n\n\n\n\nHistorical weather\nHistorical hourly weather at a specified latitude and longitude over a date range\nhttps://archive-api.open-meteo.com/v1/ archive?{params}",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-objective",
+    "href": "slides/01_workshop_and_project_intro.html#project-objective",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project Objective",
+    "text": "Project Objective\n\nProvide users travelers with a self-service tool that predicts the likelihood of a ferry departure delay.\n\n\nProject Requirements\n\n\n🤖 Automate the pipeline\n⚠️ Receive alerts if there are issues in the pipeline\n🔄 Project is easy to maintain and iterate upon\n Work is reusable by other teams, even if they don’t use R (Lookin’ at you )",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-overview",
+    "href": "slides/01_workshop_and_project_intro.html#project-overview",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project Overview",
+    "text": "Project Overview",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#section-1",
+    "href": "slides/01_workshop_and_project_intro.html#section-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "",
+    "text": "Get Your Environment Set Up",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#your-tools",
+    "href": "slides/01_workshop_and_project_intro.html#your-tools",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Your Tools",
+    "text": "Your Tools",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#your-tools-1",
+    "href": "slides/01_workshop_and_project_intro.html#your-tools-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Your Tools",
+    "text": "Your Tools",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#access-your-tools",
+    "href": "slides/01_workshop_and_project_intro.html#access-your-tools",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Access Your Tools",
+    "text": "Access Your Tools\nVisit 🧚 https://ferryland.posit.team 🧚 to access:\n\nWorkbench: https://dev.ferryland.posit.team\nConnect: https://pub.ferryland.posit.team\nPackage Manager: https://pkg.ferryland.posit.team",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#connect-setup-step-1",
+    "href": "slides/01_workshop_and_project_intro.html#connect-setup-step-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Connect Setup // Step 1",
+    "text": "Connect Setup // Step 1\nVisit: https://pub.ferryland.posit.team\n\n\n\n\n\n\n\nMake sure you have a GitHub account!",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#connect-setup-step-2",
+    "href": "slides/01_workshop_and_project_intro.html#connect-setup-step-2",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Connect Setup // Step 2",
+    "text": "Connect Setup // Step 2",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#workbench-setup-step-1",
+    "href": "slides/01_workshop_and_project_intro.html#workbench-setup-step-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Workbench Setup // Step 1",
+    "text": "Workbench Setup // Step 1\nVisit: https://dev.ferryland.posit.team\nYou do NOT need to re-authenticate with GitHub!",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#workbench-setup-step-2",
+    "href": "slides/01_workshop_and_project_intro.html#workbench-setup-step-2",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Workbench Setup // Step 2",
+    "text": "Workbench Setup // Step 2\n\n\n\nClick New Session\nStart a RStudio Pro session\nCreate a new project from a version control repository\nSelect Git\nAdd the workshops GitHub Repo URL –&gt; https://github.com/posit-conf-2025/ds-workflows-r.git\nCall the project directory ds-workflows-r\nLeave everything else as default. Select Create Project.",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#workbench-setup-step-2-1",
+    "href": "slides/01_workshop_and_project_intro.html#workbench-setup-step-2-1",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Workbench Setup // Step 2",
+    "text": "Workbench Setup // Step 2",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#project-and-activity-navigation",
+    "href": "slides/01_workshop_and_project_intro.html#project-and-activity-navigation",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Project and Activity Navigation",
+    "text": "Project and Activity Navigation\nWe will work exclusively within the 📁 materials directory and associated subfolders.\n\n.\n└── materials\n    ├── 01-raw-data-write\n    │   ├── ...\n    │   ├── 01-raw-data-write.Rproj\n    │   └── 01-raw-data-write.qmd\n    ├── 02-data-exploration\n    │   ├── ...\n    │   ├── 02-data-exploration.Rproj\n    │   └── 02-data-exploration.qmd\n    └── ...\n        └── ...\n\n💡 Within each directory, there is a .Rproj file.\n\nFor an activity, open the respective .Rproj in the activity folder\nrenv::restore() for each activity",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#saving-your-work",
+    "href": "slides/01_workshop_and_project_intro.html#saving-your-work",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "Saving your work 💾",
+    "text": "Saving your work 💾\n\nAll source material can be found on the GitHub page: https://github.com/posit-conf-2025/ds-workflows-r\nThe environment we’re working on will stay on for a few days after conf…but that’s it!\nIf you would like to save your work, we recommend:\n\nExporting any source code to your local machine.\nFork the project to a personal GitHub Repo.",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
+  },
+  {
+    "objectID": "slides/01_workshop_and_project_intro.html#section-2",
+    "href": "slides/01_workshop_and_project_intro.html#section-2",
+    "title": "Data Science Workflows with Posit Tools",
+    "section": "",
+    "text": "Let’s Get to Work!\n\n\n\n\nClick to go back to Data Science Workflows with Posit Tools - R Focus website ↩︎",
+    "crumbs": [
+      "Resources",
+      "Slides",
+      "01 - Workshop and Project Intro"
+    ]
   }
 ]

@@ -1,7 +1,7 @@
 ---
 title: "Data Science Workflows<br> with Posit Tools"
 subtitle: "R Focus"
-author: "<b>Instructors:</b> <br> Ryan Johnson <br>Katie Masiello <br> <br><b>TA:</b> <br>Trevor Nederlof"
+author: "<b>Instructors:</b> <br> Ryan Johnson <br>Katie Masiello <br> <br><b>TA:</b> <br>Kalau Pessamino-Tanaka"
 title-slide-attributes: 
   data-background-color: white
   data-background-image: _extensions/positconfslides/assets/backgrounds/title-slide-light.svg
@@ -18,15 +18,15 @@ Introduction
 
 🛜 WiFi credentials:
 
--   Network: `Posit Conf 2024`
+-   Network: `TBD`
 
--   Password: `conf2024`
+-   Password: `TBD`
 
 -   Important locations:
 
-    -   **Bathrooms**: There are gender-neutral bathroom on levels 3, 4, 5, 6 & 7
-    -   **Meditation/prayer room**: 503 (available Mon & Tues 7am - 7pm, and Wed 7am - 5pm)
-    -   **Mothers room**: 509 (same timings as above)
+    -   **Bathrooms**: There are gender-neutral bathroom on levels TBD.
+    -   **Meditation/prayer room**: TBD
+    -   **Mothers room**: TBD
 
 ## Logistics {.content-light}
 
@@ -63,9 +63,9 @@ https://posit.co/code-of-conduct/
 :::
 
 ::: {.column width="33%"}
-![](https://avatars.githubusercontent.com/u/180123?v=4){.hello-image}
+![](slide_resources/kalau.png){.hello-image}
 
-[**Trevor Nederlof**]{.positgreen}
+[**Kalau Pessamino-Tanaka**]{.positgreen}
 
 [Solutions Engineer \@ Posit]{.smaller}
 :::
@@ -82,7 +82,7 @@ https://posit.co/code-of-conduct/
 ## Agenda
 
 | Time | Activity |
-|:---|:---|
+|:-----------------------------------|:-----------------------------------|
 | \~9:00 - 10:30 | Workshop Introduction <br> Reading, Cleaning, Writing and Validating Data |
 | 10:30 - 11:00 | *Coffee break* ☕ |
 | \~11:00 - 12:30 | Creating, Delivering, and Monitoring a model using Vetiver |
@@ -115,13 +115,13 @@ https://posit.co/code-of-conduct/
 
 ## Workshop approach
 
-We will use an [**end-to-end real-world project**]{.positgreen} to demonstrate workflows and best practices using [**open source packages**]{.positteal} and [**Posit professional tools**]{.positteal}.
+We will use an [**end-to-end data science project**]{.positgreen} to demonstrate workflows and best practices using [**open source packages**]{.positteal} and [**Posit professional tools**]{.positteal}.
 
 ::: fragment
 <h2><br> Conventions</h2>
 
 |  |  |
-|----|----|
+|------------------------------------|------------------------------------|
 | 🧰 | Add this to your toolbox. |
 | 📣 | I will stand on my soapbox and profess this until I am blue in the face. |
 | {{< bi sign-turn-right-fill color=orange >}} | Detour warning. We could get really into this, but there's not time today. |
@@ -131,15 +131,11 @@ We will use an [**end-to-end real-world project**]{.positgreen} to demonstrate w
 
 ## Asking Questions
 
-
 👉 Submit questions and respond to polls on **GitHub Discussions**
 
-<br> 
-<https://github.com/posit-conf-2025/ds-workflows-r/discussions>
-
+<br> <https://github.com/posit-conf-2025/ds-workflows-r/discussions>
 
 ![](slide_resources/gh_discussions.png){width="100%" fig-align="center"}
-
 
 <br>
 
@@ -154,7 +150,6 @@ We will use an [**end-to-end real-world project**]{.positgreen} to demonstrate w
 <h3>Go to the Discussion now and respond to the question!</h3>
 :::
 ::::
-
 
 ## Getting help (R Functions) {.content-light}
 
@@ -177,103 +172,147 @@ help(function_name_here)
 ```
 :::
 
-##  {background-image="_extensions/positconfslides/assets/backgrounds/brackets-dark-teal.svg" background-size="contain" auto-animate="true" auto-animate-duration="4"}
+## 🥤 Posit Cola
 
-::: section-title-dark
-⛴️ Ready to set sail? 🌊
+<br>
+
+![](slide_resources/posit-cola.png){fig-align="center" width="615"}
+
+## Meet the Drinks - Classic!
+
+::::: {.columns .center}
+::: {.column width="25%"}
+![](slide_resources/posit-cola-classic.png){fig-align="center" width="253"}
 :::
 
-![](slide_resources/wenatchee.png){.absolute bottom="200" left="-1200" width="1000"}
+::: {.column width="75%"}
+### Posit Cola Classic
 
-##  {background-image="_extensions/positconfslides/assets/backgrounds/brackets-dark-teal.svg" background-size="contain" auto-animate="true" auto-animate-duration="4"}
-
-::: section-title-dark
-⛴️ Ready to set sail? 🌊
+The flagship beverage of the open source data science revolution that's refreshingly transparent with zero proprietary ingredients and may cause excessive enthusiasm about reproducible workflows! 🥤✨
 :::
+:::::
 
-![](slide_resources/wenatchee.png){.absolute bottom="200" right="-1200" width="1000"}
+## Meet the Drinks - Lite!
 
-## Washington State Ferry System 
-
-<br> ⛴️ [WSF is the largest operating public ferry system in the US! 🤯]{.posityellow}
-
-🐋 [21 ferries across Puget Sound and the Salish Sea]{.posityellow}
-
-::::: columns
-::: {.column width="15%"}
-![](slide_resources/vessel_classes.png){height="600"}
+::::: {.columns .center}
+::: {.column width="35%"}
+![](slide_resources/posit-cola-lite.png){fig-align="center" width="659"}
 :::
 
 ::: {.column width="60%"}
-![](slide_resources/ferry-whales.png){height="600" fig-align="center"} [<https://i.pinimg.com/originals/c9/8b/3a/c98b3a997df52b6c8ad681590557c6bc.jpg>]{.figcaption2}
-:::
+### Posit Cola Lite
 
-::: {.column width="25%"}
-![](slide_resources/route_map.png){height="600"}
+The guilt-free version of our flagship cola with half the calories, twice the efficiency, and all the essential nutrients for reproducible research minus the bloat! 🥤✨
 :::
-
 :::::
 
-## Meet the Ferries
+## Meet the Drinks - Zero!
 
+::::: {.columns .center}
+::: {.column width="35%"}
+![](slide_resources/posit-cola-zero.png){fig-align="center" width="659"}
+:::
 
-<iframe src="slide_resources/ferry_names.html" width=100% height=800></iframe>
+::: {.column width="60%"}
+### Posit Cola Zero
 
+ 🥤✨All the open source power you crave with zero sugar, using advanced artificial sweeteners to deliver maximum flavor with minimal overhead, perfect for data scientists monitoring their model metrics while maintaining pure analytical satisfaction.
+:::
+:::::
 
+## Meet the Drinks - Quarto Fizz!
 
-## Washington State Ferry Depature Delays Project
+::::: {.columns .center}
+::: {.column width="25%"}
+![](slide_resources/posit-cola-quarto-fizz.png){fig-align="center" width="253"}
+:::
+
+::: {.column width="75%"}
+### Posit Cola - Quarto Fizz
+
+The sparkling sensation combining multi-language publishing power with refreshing citrus twist! Warning: May cause R Markdown conversion addiction and excessive cross-reference excitement! 🥤✨
+:::
+:::::
+
+## Meet the Drinks - Connect Orange!
+
+::::: {.columns .center}
+::: {.column width="25%"}
+![](slide_resources/posit-cola-connect-orange.png){fig-align="center" width="253"}
+:::
+
+::: {.column width="75%"}
+### Posit Cola Connect Orange
+
+The enterprise-grade cola that connects your thirst to satisfaction with robust, scalable refreshment and enterprise security built in! 🥤✨
+:::
+:::::
+
+## Meet the Drinks - Workbench Energy!
+
+::::: {.columns .center}
+::: {.column width="35%"}
+![](slide_resources/posit-cola-workbench-energy.png){fig-align="center" width="659"}
+:::
+
+::: {.column width="60%"}
+### Workbench Energy
+
+The ultimate high-performance fuel for data scientists packed with IDE vitamins, collaborative minerals, and 200% more computational caffeine! ⚡🥤
+:::
+:::::
+
+## Meet the Drinks - Cloud Water!
+
+::::: {.columns .center}
+::: {.column width="40%"}
+![](slide_resources/posit-cola-cloud-water.png){fig-align="center" width="800"}
+:::
+
+::: {.column width="60%"}
+### Cloud Water
+
+Pure H2O from the digital cloud with zero-calorie, zero-setup refreshment that instantly connects data scientists to their workspace from any device! 💧☁️
+:::
+:::::
+
+## Posit Cola - The Project
 
 ::: {.callout-caution icon="false"}
 ## The Question
 
-Can we predict departure delay for a given route and date?
+Can we predict sales revenue for Posit Cola products?
 :::
 
 ::: {.callout-tip icon="false"}
 ## Our Approach
 
-Use the historical (validated) delay, location, and weather data to create a model that will predict the likelihood of delays!
+We'll use (synthetic) Posit Cola sales data to make predictions about future sales revenue.
 :::
 
-![](slide_resources/2-super.gif)
+![](slide_resources/posit-cola.png){fig-align="center" width="800"}
 
-## Project Data {.content-light}
+## 🥤 Project Data
 
-This workshop will use data from two primary data sources:
+This workshop will use historical data of Posit Cola sales: `ds-workflows-r/data/posit_cola_sales_data.csv`
 
--   ⛴︎ Ferry data (<https://wsdot.wa.gov/traffic/api/>)
-
--   🌤️ Weather data (<https://open-meteo.com/en/docs/historical-weather-api/>)
-
-## Project Data Details
+**Columns:**
 
 ::: smaller
-<br> ⛴︎ Ferry data (<https://wsdot.wa.gov/traffic/api/>)
-
-| Data Set | Description | API |
-|----|----|----|
-| **Vessel verbose** | Details about each ferry in the fleet, including name, model, and capacity | `https://www.wsdot.wa.gov/ferries/api/ vessels/rest/vesselverbose? apiaccesscode={WSDOT_ACCESS_CODE}` |
-| **Vessel history** | Historical sailings, including scheduled actual departure time | `https://www.wsdot.wa.gov/ferries/api/ vessels/rest/vesselhistory/ {VESSELNAME}/{DATESTART}/{DATEEND}? apiaccesscode={WSDOT_ACCESS_CODE}` |
-| **Terminal locations** | Terminal names and locations, including latitude and longitude | `https://www.wsdot.wa.gov/ferries/ api/terminals/rest/terminallocations? apiaccesscode={WSDOT_ACCESS_CODE}` |
-
-: {tbl-colwidths="\[20,35,65\]"}
-:::
-
-## Project Data Details
-
-::: smaller
-<br> 🌤️ Weather data (<https://open-meteo.com/en/docs/historical-weather-api/>)
-
-| Endpoint | Description | API |
-|----|----|----|
-| **Historical weather** | Historical hourly weather at a specified latitude and longitude over a date range | `https://archive-api.open-meteo.com/v1/ archive?{params}` |
-
-: {tbl-colwidths="\[20,35,65\]"}
+-   `date`: Date of sale
+-   `product`: Product type (e.g., Classic, Lite, Zero)
+-   `region`: Region of sale (e.g., Latin America, North America, Europe)
+-   `store_type`: Type of store (e.g., Supermarket, Convenience Store)
+-   `store_id`: Unique identifier for the store
+-   `units_sold`: Number of units sold
+-   `unit_price`: Price per unit
+-   `revenue`: Total revenue from sales (units_sold * unit_price)
+-   `promotion`: Name of promotion that was running at time of sale
 :::
 
 ## Project Objective
 
--   Provide ~~users~~ **travelers** with a self-service tool that predicts the likelihood of a ferry departure delay.
+-   Provide Posit Cola decision makers with a tool to help predict future sales revenue.
 
 <h2><br>Project Requirements</h2>
 
@@ -284,7 +323,7 @@ This workshop will use data from two primary data sources:
 
 ## Project Overview
 
-![](slide_resources/ds-workflows-r-2024.jpg){fig-align="center"}
+TODO: Insert a diagram of the project workflow here.
 
 ##  {.brackets-dark-teal}
 
@@ -302,11 +341,11 @@ Get Your Environment Set Up
 
 ## Access Your Tools {.content-light}
 
-[Visit 🧚 <https://ferryland.posit.team> 🧚 to access:]{.large}
+[Visit TBD to access:]{.large}
 
--   Workbench: <https://dev.ferryland.posit.team>
--   Connect: <https://pub.ferryland.posit.team>
--   Package Manager: <https://pkg.ferryland.posit.team>
+-   Workbench: TBD
+-   Connect: TBD
+-   Package Manager: TBD
 
 ![](slide_resources/ferryland_landing.png)
 
@@ -346,7 +385,7 @@ Make sure you have a GitHub account!
 
 ## Workbench Setup // Step 1
 
-Visit: <https://dev.ferryland.posit.team>
+Visit: TBD
 
 You do **NOT** need to re-authenticate with GitHub!
 
@@ -380,9 +419,8 @@ You do **NOT** need to re-authenticate with GitHub!
 
 We will work exclusively within the 📁 `materials` directory and associated subfolders.
 
-:::{.smaller}
-
-```
+::: smaller
+```         
 .
 └── materials
     ├── 01-raw-data-write
@@ -398,11 +436,10 @@ We will work exclusively within the 📁 `materials` directory and associated su
 ```
 :::
 
- 💡 Within each directory, there is a `.Rproj` file. 
-    
-1.  For an activity, open the respective `.Rproj` in the **activity folder**
-2. `renv::restore()` for each activity
+💡 Within each directory, there is a `.Rproj` file.
 
+1.  For an activity, open the respective `.Rproj` in the **activity folder**
+2.  `renv::restore()` for each activity
 
 ## Saving your work 💾 {.content-light}
 
