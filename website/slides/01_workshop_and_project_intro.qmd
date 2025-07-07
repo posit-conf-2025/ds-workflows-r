@@ -3,12 +3,12 @@ title: "Data Science Workflows<br> with Posit Tools"
 subtitle: "R Focus"
 author: "<b>Instructors:</b> <br> Ryan Johnson <br>Katie Masiello <br> <br><b>TA:</b> <br>Kalau Pessamino-Tanaka"
 title-slide-attributes: 
-  data-background-color: white
-  data-background-image: _extensions/positconfslides/assets/backgrounds/title-slide-light.svg
+  data-background-color: black
+  data-background-image: _extensions/positconfslides/assets/backgrounds/title-slide-dark.svg
   data-background-size: contain
 ---
 
-##  {.brackets-dark-teal}
+##  {.cubes}
 
 ::: section-title-dark
 Introduction
@@ -43,7 +43,7 @@ Introduction
 https://posit.co/code-of-conduct/
 :::
 
-## Meet the Team!
+## Meet the Team! {.content-light}
 
 :::::: {.columns .center}
 ::: {.column width="33%"}
@@ -79,7 +79,7 @@ https://posit.co/code-of-conduct/
 :::
 ::::
 
-## Agenda
+## Agenda  {.content-light}
 
 | Time | Activity |
 |:-----------------------------------|:-----------------------------------|
@@ -91,7 +91,7 @@ https://posit.co/code-of-conduct/
 | 3:00 - 3:30 | *Coffee break* ☕ |
 | \~3:30 - 5:00 | Advancing your Workflow |
 
-## The Sticky Situation
+## The Sticky Situation 
 
 ::::::: {.columns .center}
 :::: {.column width="50%"}
@@ -113,7 +113,7 @@ https://posit.co/code-of-conduct/
 ### 👨‍💻Put your sticky note on the back of your laptop screen 👩‍💻
 :::::::
 
-## Workshop approach
+## Workshop approach  {.content-light}
 
 We will use an [**end-to-end data science project**]{.positgreen} to demonstrate workflows and best practices using [**open source packages**]{.positteal} and [**Posit professional tools**]{.positteal}.
 
@@ -129,13 +129,13 @@ We will use an [**end-to-end data science project**]{.positgreen} to demonstrate
 : {tbl-colwidths="\[5,95\]"}
 :::
 
-## Asking Questions
+## Asking Questions {.content-light}
 
 👉 Submit questions and respond to polls on **GitHub Discussions**
 
 <br> <https://github.com/posit-conf-2025/ds-workflows-r/discussions>
 
-![](slide_resources/gh_discussions.png){width="100%" fig-align="center"}
+![](slide_resources/gh_discussions.png){width="65%" fig-align="center"}
 
 <br>
 
