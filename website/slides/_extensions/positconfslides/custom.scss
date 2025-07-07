@@ -13,15 +13,15 @@ $code-block-font-size: 0.90em;
 
 // colors
 $body-bg:      #FFFFFF;
-$body-color:   #404041;
-$code-color:   #9a4665;
+$body-color:   #203d4f;
+$code-color:   #AB4D26;
 $selection-bg: #93bdbf;
-$link-color:   #3D6E74;
+$link-color:   #7D1A03;
 
 // dark colors
 $dark-bg-text-color:	#F0F0F0;
-$dark-bg-code-color:	#F0F0F0;
-$dark-bg-link-color:	#fff7fb;
+$dark-bg-code-color:	#E7B10A;
+$dark-bg-link-color:	#EE6331;
 
 /*-- scss:rules --*/
 
@@ -31,7 +31,7 @@ $dark-bg-link-color:	#fff7fb;
 }
 
 #title-slide .quarto-title-author-name {
-  font-size: 50px;
+  font-size: 30px;
   font-weight: 300;
 }
 
@@ -44,7 +44,17 @@ section div.has-dark-background {
   color: $dark-bg-text-color;
 }
 
+section div.has-dark-background h1 {
+  font-weight: 300 !important;
+  color: $dark-bg-text-color;
+}
+
 section div.has-dark-background h2 {
+  font-weight: 300 !important;
+  color: $dark-bg-text-color;
+}
+
+section div.has-dark-background h3 {
   font-weight: 300 !important;
   color: $dark-bg-text-color;
 }
