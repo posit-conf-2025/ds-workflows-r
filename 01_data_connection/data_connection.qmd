@@ -1,0 +1,131 @@
+---
+title: "Data Connectivity with Managed Credentials"
+format:
+  html:
+    toc: true
+    toc-location: left
+    anchor-sections: true
+    code-fold: true
+    code-overflow: wrap
+    code-summary: "Show Code"
+    code-tools: true
+    code-link: true
+editor_options: 
+  chunk_output_type: console
+  canonical: true
+html-table-processing: none
+---
+
+## General Workshop Activity Notes
+
+Welcome to the Workbench Managed Credentials activity! A few points relevant to this activity:
+
+1.  This Activity is a Quarto document, presented by default in the Visual Editor for readability
+2.  Run each code chunk interactively rather than rendering the document
+3.  Run the chunk by either clicking the green Play Button ▶︎ in the chunk's top right corner, or use the cmd+enter keyboard shortcut
+
+------------------------------------------------------------------------
+
+## Goals
+
+The goals of this activity are to:
+
+-   connect to an AWS resource using Workbench-Managed AWS Credentials.
+-   publish to Posit Connect using the Posit Publisher extension
+-   use a Connect OAuth integration in deployment for secure access to AWS resources
+
+**Security Note**: Never hardcode credentials in your code!
+
+## Setup
+
+```{r}
+#| label: load required packages
+
+library(paws)
+
+```
+
+## Verify credentials
+
+If you started your development session with AWS Managed Credentials, Workbench has already populated your session with your AWS credentials using a short-lived access token. But don't worry, Workbench is managing the refresh of your token so you can work uninterrupted! AWS SDKs and the AWS CLI detect this token automatically, so connections will *just work*. ✨
+
+The `paws` package provides an R-interface to the AWS SDK. We'll use this to interact with our AWS resources.
+
+Check it out:
+
+```{r}
+#| label: verify-credentials
+#| eval: false
+
+# STS is the AWS Security Token Service
+# We'll make a client service to interact with STS
+# Notice we don't have to manually specify any credential information!
+svc <- paws::sts()
+
+# Use the client to get information about your current AWS identity
+svc$get_caller_identity()
+```
+
+You should see output similar to:
+
+``` bash
+$UserId
+[1] "AROAXXXXXXXXXXXXXXXXX:user.name"
+
+$Account
+[1] "123456789012"
+
+$Arn
+[1] "arn:aws:sts::123456789012:assumed-role/example-role-name/user.name"
+```
+
+## Read data from S3
+
+Now let's read our project data from an AWS S3 bucket using our managed credentials.
+
+```{r}
+#| label: read-s3
+#| eval: false
+
+# Make a client service to interact with S3
+# Notice we don't have to manually specify any credential information!
+s3_client <- paws::s3()
+
+# Bucket information
+bucket_name <- "ds-workflows-wkshp"  
+region <- "us-east-2"       
+
+# Read the data from S3
+
+data <- s3_client$head_bucket(Bucket = bucket_name)
+```
+
+## Publish this notebook to Posit Connect
+
+We'll use the Positron / VS Code extension `Posit Publisher` to deploy this notebook to Connect.
+
+Referencing the User Guide <https://docs.posit.co/connect/user/publishing-positron-vscode/>:
+
+1.  Click the Publisher extension icon in the left-hand sidebar
+
+    ![](https://docs.posit.co/connect/user/images/screenshots/publisher-icon.png){width="40"}
+
+2.  Create a new deployment by clicking the **Add Deployment** button
+
+3.  Select this file `01_data_connection/data_connection.qmd` as the entrypoint
+
+4.  Press Enter to accept the default Title
+
+5.  Press Enter to accept the configured Posit Connect URL `https://pub.workshop.posit.team`
+
+6.  Enter your Connect API Key (one-time setup)
+
+7.  Give the server a nickname - `Workshop Connect` is just fine (one-time setup)
+
+8.  Review information
+
+9.  🚀 Click **Deploy Your Project**
+
+## Configure Connect OAuth integration 
+
+Once deployed, Configure Connect OAuth Integration to use the AWS Service Account for accessing S3.
