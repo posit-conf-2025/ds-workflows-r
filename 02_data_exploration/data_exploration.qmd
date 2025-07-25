@@ -1,0 +1,173 @@
+---
+title: "Posit Cola Sales Data Exploration"
+format:
+  html:
+    toc: true
+    toc-location: left
+    anchor-sections: true
+    code-fold: true
+    code-overflow: wrap
+    code-summary: "Show Code"
+    code-tools: true
+    code-link: true
+editor_options: 
+  chunk_output_type: console
+  canonical: true
+html-table-processing: none
+---
+
+## Goals
+
+The goals of this activity are to:
+
+-   Get familiar with the Posit Cola data set, which is used throughout this Workshop
+-   Use a variety of tools to help explore and characterize the data:
+    -   Positron Data Explorer
+    -   R packages:
+        -   `skimr::skim`
+        -   `pointblank::scan_data`
+- Bonus: generate a dynamic data dictionary for project documentation
+
+✏️ There will be placeholders (`____`) in the code cells below that you will need to fill in!
+
+## Setup
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(skimr)
+library(pointblank)
+library(gt)
+library(glue)
+```
+
+## Task 1 - Load and Preview the Data
+
+Load the cola sales data and get an initial understanding of its structure.
+
+```{r}
+#| label: load-data
+
+# TODO: CHANGE THIS TO READ FROM A SHARED DATA STORE
+# Load the cola sales data
+data <- read_csv("~/ds-workflows-r/data/posit_cola_sales_data.csv")
+
+# Preview the data
+data
+
+```
+
+## Task 2 - Use the Positron Data Explorer
+
+Try the new Data Explorer! You can filter, sort, see summaries and more. Read more at \<<https://positron.posit.co/data-explorer.html>\>
+
+You can access the data explorer by:
+
+-   Click on the table icon on the Variables pane
+
+-   `View(data)`
+
+-   Open the file from the File Explorer
+
+**Your turn!** Open the `data` data frame in the Data Explorer and get to know the data. Ideas:
+
+-   Which columns have missing values?
+
+-   Add a filter
+
+-   Sort the data by multiple columns
+
+## Task 3 - Use R packages to profile the data
+
+There are some useful R packages to add to your toolbox when conducting data exploration. Let's play with `skimr` and `pointblank`. These both create polished outputs when included in a rendered document, making them excellent options for project documentation.
+
+```{r}
+#| label: skimr
+
+skimr::skim(data)
+```
+
+
+The `pointblank::scan_data()` function provides a HTML report of the input data to help you understand your data. It contains 6 sections:
+
+-   **Overview (O)**: Table dimensions, duplicate row counts, column types, and reproducibility information
+-   **Variables (V)**: A summary for each table variable and further statistics and summaries depending on the variable type
+-   **Interactions (I)**: A matrix plot that shows interactions between variables
+-   **Correlations (C)**: A set of correlation matrix plots for numerical variables
+-   **Missing Values (M)**: A summary figure that shows the degree of missingness across variables
+-   **Sample (S)**: A table that provides the head and tail rows of the data set
+
+⚠️ The "Correlations" and "Interactions" sections take the longest to run, especially on a larger data set. Save time by omitting sections that are not needed.
+
+```{r}
+#| label: pointblank::scan_data
+
+# specify the sections of interest for the data scan. 
+# ⚠️ "I" and "C" can take multiple minutes to run! Omit these for the sake of time.
+  
+scan <- pointblank::scan_data(data, sections = "____")
+
+scan
+```
+
+
+
+## Bonus - Create a Data Dictionary
+
+`pointblank` can help your project documentation by creating a data dictionary. Here we will document the cola sales dataset structure and provide useful notes. You can customize and make this as dynamic as you wish. The table below is just a sample.
+
+```{r}
+#| label: data-dictionary
+
+# Create a comprehensive data dictionary
+create_informant(
+  tbl = data,
+  label = md("Data Dictionary - Cola Sales Transaction Data")) |> 
+  info_tabular(
+    description = "This table contains transactional sales data for Posit Cola products across multiple regions and store types."
+  ) |> 
+  info_section(
+    section_name = "further information",
+    `🔄 updates` = glue("This data dictionary was created on {Sys.Date()}."),
+    `📊 scope` = glue("Dataset covers {as.numeric(max(data$date) - min(data$date))} days of sales data with {nrow(data)} transactions.")
+  ) |> 
+  info_columns(
+    columns = date,
+    `ℹ️` = glue("Transaction date in YYYY-MM-DD format (range: {min(data$date, na.rm = TRUE)} to {max(data$date, na.rm = TRUE)})")
+  ) |> 
+  info_columns(
+    columns = product,
+    `ℹ️` = "Product name/brand of cola sold"
+  ) |> 
+  info_columns(
+    columns = region,
+    `ℹ️` = "Geographic region where the sale occurred"
+  ) |> 
+  info_columns(
+    columns = store_type,
+    `ℹ️` = "Type of retail channel (e.g., Supermarket, Gas Station, etc.)"
+  ) |> 
+  info_columns(
+    columns = store_id,
+    `ℹ️` = "Unique identifier for the individual store location"
+  ) |> 
+  info_columns(
+    columns = units_sold,
+    `ℹ️` = "Number of product units sold in this transaction"
+  ) |> 
+  info_columns(
+    columns = unit_price,
+    `ℹ️` = "Price per unit in USD"
+  ) |> 
+  info_columns(
+    columns = revenue,
+    `ℹ️` = "Total revenue for this transaction (units_sold × unit_price)"
+  ) |> 
+  info_columns(
+    columns = promotion,
+    `ℹ️` = "Type of promotion active during this sale (if any)"
+  ) |> 
+  incorporate()
+
+```
