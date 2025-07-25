@@ -23,6 +23,8 @@ Welcome to the Workbench Managed Credentials activity! A few points relevant to 
 1.  This Activity is a Quarto document, presented by default in the Visual Editor for readability
 2.  Run each code chunk interactively rather than rendering the document
 3.  Run the chunk by either clicking the green Play Button ▶︎ in the chunk's top right corner, or use the cmd+enter keyboard shortcut
+4.  We'll work through these activities mostly as a group, code-along style because our focus in this workshop is less about code development and more about around processes, tools, and learning concepts. We can best teach this if we do it together!
+5.  **Where's my output?** Are you a `Chunk Output Inline` kind of person? Sorry. For the Workshop, it's set by default to go the console because it requires less scrolling up/down to talk through things. If you hate it, you can change it. 😉
 
 ------------------------------------------------------------------------
 
@@ -45,7 +47,7 @@ library(paws)
 
 ```
 
-## Verify credentials
+## Task 1 - Verify credentials
 
 If you started your development session with AWS Managed Credentials, Workbench has already populated your session with your AWS credentials using a short-lived access token. But don't worry, Workbench is managing the refresh of your token so you can work uninterrupted! AWS SDKs and the AWS CLI detect this token automatically, so connections will *just work*. ✨
 
@@ -79,7 +81,7 @@ $Arn
 [1] "arn:aws:sts::123456789012:assumed-role/example-role-name/user.name"
 ```
 
-## Read data from S3
+## Task 2 - Read data from S3
 
 Now let's read our project data from an AWS S3 bucket using our managed credentials.
 
@@ -100,7 +102,7 @@ region <- "us-east-2"
 data <- s3_client$head_bucket(Bucket = bucket_name)
 ```
 
-## Publish this notebook to Posit Connect
+## Task 3 - Publish this notebook to Posit Connect
 
 We'll use the Positron / VS Code extension `Posit Publisher` to deploy this notebook to Connect.
 
@@ -126,6 +128,6 @@ Referencing the User Guide <https://docs.posit.co/connect/user/publishing-positr
 
 9.  🚀 Click **Deploy Your Project**
 
-## Configure Connect OAuth integration 
+## Task 4 - Configure Connect OAuth integration
 
 Once deployed, Configure Connect OAuth Integration to use the AWS Service Account for accessing S3.
