@@ -1,5 +1,5 @@
 ---
-title: "Clean and Validate Cola Sales Data"
+title: "Validate Cola Sales Data"
 format:
   email:
     toc: true
@@ -16,8 +16,6 @@ editor_options:
   canonical: true
 html-table-processing: none
 ---
-
-## Goals
 
 ## Goals
 
