@@ -10,6 +10,7 @@ format:
     code-summary: "Show Code"
     code-tools: true
     code-link: true
+editor: visual
 editor_options: 
   chunk_output_type: console
   canonical: true
@@ -101,33 +102,3 @@ region <- "us-east-2"
 
 data <- s3_client$head_bucket(Bucket = bucket_name)
 ```
-
-## Task 3 - Publish this notebook to Posit Connect
-
-We'll use the Positron / VS Code extension `Posit Publisher` to deploy this notebook to Connect.
-
-Referencing the User Guide <https://docs.posit.co/connect/user/publishing-positron-vscode/>:
-
-1.  Click the Publisher extension icon in the left-hand sidebar
-
-    ![](https://docs.posit.co/connect/user/images/screenshots/publisher-icon.png){width="40"}
-
-2.  Create a new deployment by clicking the **Add Deployment** button
-
-3.  Select this file `01_data_connection/data_connection.qmd` as the entrypoint
-
-4.  Press Enter to accept the default Title
-
-5.  Press Enter to accept the configured Posit Connect URL `https://pub.workshop.posit.team`
-
-6.  Enter your Connect API Key (one-time setup)
-
-7.  Give the server a nickname - `Workshop Connect` is just fine (one-time setup)
-
-8.  Review information
-
-9.  🚀 Click **Deploy Your Project**
-
-## Task 4 - Configure Connect OAuth integration
-
-Once deployed, Configure Connect OAuth Integration to use the AWS Service Account for accessing S3.
