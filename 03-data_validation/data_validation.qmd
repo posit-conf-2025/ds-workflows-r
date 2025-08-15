@@ -23,7 +23,6 @@ The goals of this activity are to:
 
 -   Use the `pointblank` package to perform data validations
 
-
 ## Setup
 
 ```{r}
@@ -54,7 +53,6 @@ schema_data <- col_schema(
 )
 ```
 
-
 ## Task 1 - Create a validation plan
 
 To create a validation plan using `pointblank` we need to:
@@ -69,14 +67,9 @@ agent <- pointblank::create_agent(____)
 agent
 ```
 
-On its own, the agent is not very informative. It's waiting for
-validations to be defined and an interrogation action to be performed.
+On its own, the agent is not very informative. It's waiting for validations to be defined and an interrogation action to be performed.
 
-Now we define our **data validation functions**. A few have been started
-for you as examples. It's up to you to fill in the suggested
-validations. Refer to the package documentation for the validation
-function reference:
-<https://rstudio.github.io/pointblank/reference/index.html#validation-expectation-and-test-functions>
+Now we define our **data validation functions**. A few have been started for you as examples. It's up to you to fill in the suggested validations. Refer to the package documentation for the validation function reference: <https://rstudio.github.io/pointblank/reference/index.html#validation-expectation-and-test-functions>
 
 ```{r}
 #| label: define validations for posit cola sales data
@@ -105,9 +98,7 @@ agent
 
 ```
 
-
-If we look at the output of `agent`, it shows our validation plan, but
-the action is yet to come. Next step is to run it with **interrogate**!
+If we look at the output of `agent`, it shows our validation plan, but the action is yet to come. Next step is to run it with **interrogate**!
 
 ## Task 2 - Run validation plan
 
@@ -127,19 +118,13 @@ Explore the validation report. Can you:
 2.  Identify how many rows failed each validation?
 3.  View the CSV extracts of failed data?
 
-Change the parameters of your validations to trigger more failures just
-to see the consequence.
-
+Change the parameters of your validations to trigger more failures just to see the consequence.
 
 ## Task 3 - Remove failing data from the data set
 
-Pointblank has identified all of the rows of `data` that
-passed and failed validation. Now remove those that failed so the data
-that is passed downstream to our modeling step is squeaky clean.
+Pointblank has identified all of the rows of `data` that passed and failed validation. Now remove those that failed so the data that is passed downstream to our modeling step is squeaky clean.
 
-Pointblank provides a number of [post-interrogation functions](https://rstudio.github.io/pointblank/reference/index.html#post-interrogation) to
-work with intel gathered from the validation. For this task, we will
-"sunder" the data using `pointblank::get_sundered_data()`.
+Pointblank provides a number of [post-interrogation functions](https://rstudio.github.io/pointblank/reference/index.html#post-interrogation) to work with intel gathered from the validation. For this task, we will "sunder" the data using `pointblank::get_sundered_data()`.
 
 > **💡 sunder** /sun·der / ˈsən-dər / *verb* \| to split apart
 
@@ -156,15 +141,11 @@ data_faulty <- get_sundered_data(agent = ____, type = "____")
 
 ## Task 4 - Post-interrogation logicals
 
-Pointblank interrogation provides multiple layers of information about
-our data. We can take advantage of this with logical TRUE / FALSE
-statements that drive downstream tasks or effects.
+Pointblank interrogation provides multiple layers of information about our data. We can take advantage of this with logical TRUE / FALSE statements that drive downstream tasks or effects.
 
--   Use `pointblank::all_passed()` to determine if all validation steps
-    passed
+-   Use `pointblank::all_passed()` to determine if all validation steps passed
 
--   Use `pointblank::get_agent_x_list` to determine if any warnings were
-    set
+-   Use `pointblank::get_agent_x_list` to determine if any warnings were set
 
 ```{r}
 #| label: All validations passed?
@@ -174,10 +155,7 @@ pointblank::____
 
 ```
 
-A broad all passed / failed for the entire validation plan might not
-provide enough granularity for a downstream task. We can drill into more
-details about each step of the validation and the results using the
-agent "x_list".
+A broad all passed / failed for the entire validation plan might not provide enough granularity for a downstream task. We can drill into more details about each step of the validation and the results using the agent "x_list".
 
 First we will see what the x_list contains.
 
@@ -190,8 +168,7 @@ xlist
 
 ```
 
-The output is like a gold mine! The resulting list includes the pass /
-fail statistics (e.g., `$n_passed`, `$n_failed`, `$f_passed`, `$f_failed`). Take a look:
+The output is like a gold mine! The resulting list includes the pass / fail statistics (e.g., `$n_passed`, `$n_failed`, `$f_passed`, `$f_failed`). Take a look:
 
 ```{r}
 #| label: extract the pass / fail statistics
@@ -200,4 +177,4 @@ xlist$____
 
 ```
 
-The xlist also includes which records triggered a threshold for `warn`, `stop`, or `notify` -- things we will talk about next when we talk about alerting! 
+The xlist also includes which records triggered a threshold for `warn`, `stop`, or `notify` -- things we will talk about next when we talk about alerting!

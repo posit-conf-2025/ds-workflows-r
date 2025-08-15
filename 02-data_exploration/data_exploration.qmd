@@ -10,6 +10,7 @@ format:
     code-summary: "Show Code"
     code-tools: true
     code-link: true
+editor: visual
 editor_options: 
   chunk_output_type: console
   canonical: true
@@ -26,7 +27,7 @@ The goals of this activity are to:
     -   R packages:
         -   `skimr::skim`
         -   `pointblank::scan_data`
-- Bonus: generate a dynamic data dictionary for project documentation
+-   Bonus: generate a dynamic data dictionary for project documentation
 
 ✏️ There will be placeholders (`____`) in the code cells below that you will need to fill in!
 
@@ -88,7 +89,6 @@ There are some useful R packages to add to your toolbox when conducting data exp
 skimr::skim(data)
 ```
 
-
 The `pointblank::scan_data()` function provides a HTML report of the input data to help you understand your data. It contains 6 sections:
 
 -   **Overview (O)**: Table dimensions, duplicate row counts, column types, and reproducibility information
@@ -110,8 +110,6 @@ scan <- pointblank::scan_data(data, sections = "____")
 
 scan
 ```
-
-
 
 ## Bonus - Create a Data Dictionary
 
