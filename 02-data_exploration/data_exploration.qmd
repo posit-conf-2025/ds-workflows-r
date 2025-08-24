@@ -128,7 +128,7 @@ create_informant(
   info_section(
     section_name = "further information",
     `🔄 updates` = glue("This data dictionary was created on {Sys.Date()}."),
-    `📊 scope` = glue("Dataset covers {as.numeric(max(data$date) - min(data$date))} days of sales data with {nrow(data)} transactions.")
+    `📊 scope` = glue("Dataset covers {as.numeric(max(data$date, na.rm = TRUE) - min(data$date, na.rm = TRUE))} days of sales data with {nrow(data)} transactions.")
   ) |> 
   info_columns(
     columns = date,
