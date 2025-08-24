@@ -10,9 +10,13 @@ Preview this report and the email locally, then publish to Posit Connect and sen
 
 If you like, include the the results from a code cell in your email, like this one:
 
-{r} library(gt)
+```{r}
 
-cars_table \<- head(mtcars) \|\> gt() cars_table
+library(gt)
+
+cars_table <- head(mtcars) |> gt() 
+cars_table
+```
 
 If you're in Visual Editor mode, type /div to insert a div and specify the Classes .email and .subject for your email. If you're in source mode, use ::: {.email} or :::{.subject} to open your div, and ::: to close it.
 
