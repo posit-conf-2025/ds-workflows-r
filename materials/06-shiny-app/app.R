@@ -11,7 +11,7 @@ API_URL <- "https://connect.posit.it/content/127ec7f3-d930-4f52-8f49-52b03f0c025
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
 # Create vetiver endpoint
-endpoint <- vetiver::vetiver_endpoint("API_URL")
+endpoint <- vetiver::vetiver_endpoint(API_URL)
 
 # Define prediction function that calls the API
 predict_revenue <- function(units_sold, unit_price, product, region, store_type) {
