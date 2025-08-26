@@ -11,7 +11,7 @@ API_URL <- "https://connect.posit.it/content/127ec7f3-d930-4f52-8f49-52b03f0c025
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
 # Create vetiver endpoint
-endpoint <- vetiver::vetiver_endpoint(API_URL)
+endpoint <- vetiver::vetiver_endpoint("API_URL")
 
 # Define prediction function that calls the API
 predict_revenue <- function(units_sold, unit_price, product, region, store_type) {
@@ -48,41 +48,30 @@ ui <- bslib::page_sidebar(
     title = "Sales Parameters",
     width = 350,
     
-    card(
-      card_header("Product Details"),
       selectInput("product",
                   "Product:",
                   choices = c("Posit Classic", "Posit Lite", "Workbench Energy", "Quarto Fizz", "Connect Orange", "Cloud Water"),
                   selected = "Posit Classic"),
-      
       selectInput("region",
                   "Region:",
                   choices = c("North America", "Europe", "Asia Pacific", "Latin America"),
                   selected = "North America"),
-      
       selectInput("store_type",
                   "Store Type:",
                   choices = c("Supermarket", "Gas Station", "Convenience Store"),
-                  selected = "Supermarket")
-    ),
-    
-    card(
-      card_header("Sales Metrics"),
+                  selected = "Supermarket"),
       numericInput("units_sold",
                    "Units Sold:",
                    value = 100,
                    min = 1,
                    max = 1000,
                    step = 1),
-
       numericInput("unit_price",
                    "Unit Price ($):",
                    value = 1.50,
                    min = 0.50,
                    max = 10.00,
-                   step = 0.01)
-    ),
-    
+                   step = 0.01),
     br(),
     actionButton("predict", 
                  "🔮 Predict Revenue", 
