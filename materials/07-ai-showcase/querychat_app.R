@@ -4,7 +4,7 @@ library(querychat)
 library(readr)
 
 # Read data
-cola_data <- read_csv("../data/posit_cola_sales_data_clean.csv")
+cola_data <- read_csv("../../tmp-data/posit_cola_sales_data.csv")
 
 # 1. Create a data source for querychat
 cola_source <- querychat_data_source(cola_data)
