@@ -100,7 +100,8 @@ The `pointblank::scan_data()` function provides a HTML report of the input data 
 
 ⚠️ The "Correlations" and "Interactions" sections take the longest to run, especially on a larger data set. Save time by omitting sections that are not needed.
 
-```{r}
+```{-}
+{r}
 #| label: pointblank::scan_data
 
 # specify the sections of interest for the data scan. 
