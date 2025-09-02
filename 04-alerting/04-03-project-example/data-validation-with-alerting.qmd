@@ -1,0 +1,386 @@
+---
+title: "Validate Cola Sales Data (with conditional alerting)"
+format:
+  email:
+    toc: true
+    toc-location: left
+    anchor-sections: true
+    code-fold: show
+    code-overflow: wrap
+    code-summary: "Show Code"
+    code-tools: true
+    code-link: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+  canonical: true
+html-table-processing: none
+---
+
+## Goals
+
+The goals of this activity are to:
+
+-   Iterate on our previous validation plan to include thresholds for alerting
+-   Trigger different coonditional emails based on the validation thresholds
+
+## Setup
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(pointblank)
+library(quarto)
+library(paws)
+library(glue) 
+library(gt)
+
+# Read data from S3 TODO: UPDATE THIS
+s3 <- paws::s3()
+
+data <- read_csv("~/ds-workflows-r/data/posit_cola_sales_data.csv")
+
+```
+
+We will want to verify our column schema matches what is expected. Let's define our schema for use in our validation plan.
+
+```{r}
+# define our column schema, which we will use in validation
+schema_data <- col_schema(
+  date = "Date",
+  product = "character", 
+  region = "character",
+  store_type = "character",
+  store_id = "numeric",
+  units_sold = "numeric",
+  unit_price = "numeric",
+  revenue = "numeric",
+  promotion = "character"
+)
+```
+
+## Task 1 - Create a validation plan with thresholds for alerting
+
+Iterate on the agent we created in the previous exercise to add action levels. Action levels behave like tags. You can decide what threshold you want to put for `notify`, `warn`, and `stop`. At a minimum, the tag will provide a visual indicator of threshold exceedance in the validation table. You can also use these tags post-interrogation to take actions.
+
+The action levels can be set as an **integer**, representing the threshold number of failing units, or a **fraction**, representing the fraction of failing units.
+
+Use `actions = action_levels(warn_at = ____, stop_at = ____, notify_at = ____)` to add desired action levels to one, some, or all of your validations and rerun the interrogation to see the output. Some samples have been provided.
+
+```{r}
+#| label: define validations for posit cola sales data
+
+agent <- create_agent(data, label = "Cola Sales Data Validation") |>
+  # Verify schema
+  col_schema_match(
+    schema_data,
+    # use 1 failure as a threshold for a stop flag
+    actions = action_levels(stop_at = 1)
+  ) |>
+  # Required fields are present
+  col_vals_not_null(
+    columns = c(date, product, region, store_id, units_sold, unit_price),
+    # set a warn flag if more than 15% of the data has missing values;
+    # set a stop flag if more than 30% of the data has missing values
+    actions = action_levels(warn_at = 0.15, stop_at = 0.30)
+  ) |>
+  # Ensure all rows are distinct (no dupliates)
+  rows_distinct(
+    # what do you think would be a good threshold if the data has a lot of duplicates?
+    actions = action_levels(warn_at = ____, stop_at = ____, notify_at = ____)
+  ) |>
+  # Validate that `units_sold`, `unit_price`, and `revenue` are reasonable values
+  col_vals_gt(columns = units_sold, value = 0) |>
+  col_vals_gt(columns = unit_price, value = 0) |>
+  col_vals_gt(columns = revenue, value = 0) |>
+  # Validate product names are among the expected set of names
+  col_vals_in_set(
+    columns = product,
+    set = c("Posit Classic", "Posit Lite", "Workbench Energy", "Quarto Fizz", "Connect Orange", "Posit Zero", "Cloud Water"),
+    # Try narrowing the set of allowed product names to inflate the number of failures, then set different actions
+    actions = action_levels(warn_at = ____, stop_at = ____, notify_at = ____)
+  ) |>
+  # Validate date is in expected range
+  col_vals_between(
+    columns = date,
+    left = as.Date("2021-01-01"),
+    right = as.Date("2024-12-31")
+  ) |>
+  # interrogate
+  interrogate()
+
+
+agent
+
+```
+
+```{r}
+agent <- create_agent(data, label = "Cola Sales Data Validation") |>
+  # Verify schema
+  col_schema_match(
+    schema_data,
+    # use 1 failure as a threshold for a stop flag
+    actions = action_levels(stop_at = 1)
+  ) |>
+  # Required fields are present
+  col_vals_not_null(
+    columns = c(date, product, region, store_id, units_sold, unit_price),
+    # set a warn flag if more than 15% of the data has missing values;
+    # set a stop flag if more than 30% of the data has missing values
+    actions = action_levels(warn_at = 0.15, stop_at = 0.30)
+  ) |>
+  # Ensure all rows are distinct (no dupliates)
+  rows_distinct(
+    # what do you think would be a good threshold if the data has a lot of duplicates?
+  ) |>
+  # Validate that `units_sold`, `unit_price`, and `revenue` are reasonable values
+  col_vals_gt(columns = units_sold, value = 0) |>
+  col_vals_gt(columns = unit_price, value = 0) |>
+  col_vals_gt(columns = revenue, value = 0) |>
+  # Validate product names are among the expected set of names
+  col_vals_in_set(
+    columns = product,
+    set = c("Posit Classic", "Workbench Energy", "Quarto Fizz", "Connect Orange", "Posit Zero", "Cloud Water"),
+    # Try narrowing the set of allowed product names to inflate the number of failures, then set different actions
+    actions = action_levels(warn_at = 0.05)
+  ) |>
+  # Validate date is in expected range
+  col_vals_between(
+    columns = date,
+    left = as.Date("2021-01-01"),
+    right = as.Date("2024-12-31")
+  ) |>
+  # interrogate
+  interrogate()
+
+
+agent
+```
+
+## Task 3 - Were any action levels set?
+
+Remember the xlist? The information about whether any of our action flags were set.
+
+```{r}
+#| label: get agent x list
+
+xlist <- pointblank::get_agent_x_list(agent)
+
+xlist
+
+```
+
+```{r}
+
+stop_notice <- any(xlist$stop)
+warn_notice <- any(xlist$warn)
+
+```
+
+## Task 4 - Set conditionals depending on validaiton outcome and write Quarto metadata
+
+We want the results of our validation to trigger different alerts and actions. Namely:
+
+a.  If no action levels were set, save the validated data for the model to use, but don't send an email. No reason to clutter the inbox!
+b.  If a warn level was set, still save our validated data for the model to use, but send an email that something might require a closer look
+c.  If a stop level was set, do not save the data for downstream use, and send an alert email
+
+First use some logic to determine what condition we are in:
+
+```{r}
+if (isTRUE(stop_notice)){
+  condition <- "STOP"
+  send_email <- TRUE
+} else if (isTRUE(warn_notice)){
+  condition <- "WARN"
+  send_email <- TRUE
+} else {
+  condition <- "OKAY"
+  send_email <- FALSE
+}
+```
+
+We will select which email gets sent by writing metadata to Quarto. The `quarto` R package includes a function `write_yaml_metadata_block` which will allow dynamic creation of metadata that is read at document render.
+
+Importantly, in the code block, you must include `#| output: asis` for correct rendering.
+
+```{r}
+#| label: metadata-block
+#| output: asis
+
+quarto::write_yaml_metadata_block(
+  # the yaml will be of the form `is_email_variant_{condition}: true`
+  # using setNames to dynamically set the key name
+  .list = setNames( 
+    nm = glue::glue("is_email_variant_{condition}"), list(TRUE)
+    )
+)
+
+
+# this will output yaml-formmatted text into the Quarto document, interpreted at render. Example:
+#---
+#is_email_variant_WARN: true
+#---
+
+
+```
+
+## Task 5 - Conditionally write the validated data for downstream use
+
+As long as we don't have a STOP condition, we will write the validated data back to S3 for the model to use in our next steps for this project.
+
+```{r}
+# sunder the data (aka remove the failed records)
+data_validated <- get_sundered_data(agent = agent, type = "pass")
+
+# Conditionally write back to S3
+# TODO: fix this
+
+if (condition %in% c("WARN","OKAY")){
+  s3$put_object(
+    Bucket = "ds-workflows-wkshp",
+    Key = "validated-data/posit_cola_sales_validated.csv",
+    Body = charToRaw(data_validated)
+  ) 
+}
+
+```
+
+## Task 6 - Write our email
+
+Use Quarto fenced divs to define an email with different bodies depending on the metadata.
+
+And if `send_email` is false (because of `condition == OKAY`), no email will be sent.
+
+::::::: email
+:::::: email-scheduled
+send_email ::: <!-- end of email-scheduled div -->
+
+::::: subject
+```{r}
+if (condition == "STOP")){
+  subject <- "⚠️ ALERT: Posit Cola sales data integrity issue"
+} else if (condition == "WARN")){
+  subject <- "ℹ️ Posit Cola sales data updated with warnings"
+} else {
+  subject <- NA
+}
+```
+
+::: <!-- end of subject div -->
+
+:::: {.content-visible when-meta="use_condition_STOP_email"}
+## ⚠️ There was a data integrity issue with the project data on `{r} today()`
+
+The Posit Cola sales data for `{r} today()` **failed** schema verification, indicating a data integrity issue.
+
+Further processing of the data did not take place. **Downstream data and artifacts have not been updated.**
+
+Please review the raw data to diagnose the issue. An extract of the raw data is shown below:
+
+```{r}
+#| echo: false
+
+head(data)
+
+```
+
+::: <!-- end of condition_STOP email div -->
+
+::: {.content-visible when-meta="use_condition_WARN_email"}
+## ℹ️ Posit Cola sales data updated for `{r} today()` with warnings
+
+The Posit Cola sales data for modeling has been validated and written, but there were warnings set due to exceedance of validation thresholds.
+
+### Validation failures
+
+The table below summarizes the validation step(s) that triggered warnings.
+
+```{r}
+#| label: get failing validations details
+#| echo: false
+
+if (condition == "WARN") {
+  step <- xlist$i[which(xlist$warn)]
+  desc <- xlist$briefs[which(xlist$warn)]
+  fails <- xlist$f_failed[which(xlist$warn)]
+  threshold <- purrr::map(step, ~{xlist$validation_set$actions[[.x]]$warn_fraction}) |> unlist()
+
+  warnings_table <- data.frame(step, desc,threshold,fails) |> gt() |> cols_label(step="Validation Step",desc="Description",fails="Fraction Failed", threshold="Threshold") |> fmt_number(columns = c(fails, threshold),decimal = 2)
+
+  warnings_table |> as_raw_html() 
+}
+```
+
+Review the associated extract files to see the records that failed validation.
+
+```{r}
+#| label: get extracts and attach to email
+#| output: asis
+#| echo: false
+
+if (condition == "WARN") {
+  failures <- purrr::map(step, ~{get_data_extracts(agent, .x)})
+
+  purrr::walk2(failures, step, ~{write_csv(.x, file = glue("extracts_step_{.y}.csv"))})
+
+  filenames_yaml <- glue(" - extracts_step_{step}.csv") |> str_c(collapse = "\n")
+
+  write_yaml_metadata_block(email-attachments = filenames_yaml)
+}
+```
+
+::: <!-- end of condition_WARN email div -->
+:::
+
+## Bonus - Add logging to this report
+
+**Report run** `{r} today()`
+
+**Condition set:** `{r} condition`
+
+**Summary of results:**
+
+```{r}
+#| label: logging summary
+#| echo: false
+#| output: asis
+
+if (condition == "STOP") {
+  print(glue("Data integrity validation failed. Data processing for the model training did not proceed. An email notification of the failure was sent."))
+}
+
+if (condition == "WARN") {
+  print(glue("Posit Cola sales data was validated and sundered, however a warning was triggered due to one or more validation steps exceeding the threshold for allowed failures.
+
+Records removed that failed validation: {nrow(data) - nrow(data_validated))}
+
+Records written to database: {nrow(data_validated)}
+
+Warnings triggered for validation step(s) listed below:"))
+
+  warnings_table
+}
+
+if (condition == "OKAY"){
+  print(glue("Posit Cola sales data was validated and sundered.
+
+Records removed that failed validation: {nrow(data) - nrow(data_validated))}
+
+Records written to database: {nrow(data_validated)}
+}
+
+
+
+```
+::::
+:::::
+::::::
+:::::::
+
+## Preview of email sent:
+
+<iframe src="email-preview/index.html" width="100%" height="500">
+
+</iframe>

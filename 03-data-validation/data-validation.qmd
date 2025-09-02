@@ -1,0 +1,180 @@
+---
+title: "Validate Cola Sales Data"
+format:
+  email:
+    toc: true
+    toc-location: left
+    anchor-sections: true
+    code-fold: show
+    code-overflow: wrap
+    code-summary: "Show Code"
+    code-tools: true
+    code-link: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+  canonical: true
+html-table-processing: none
+---
+
+## Goals
+
+The goals of this activity are to:
+
+-   Use the `pointblank` package to perform data validations
+
+## Setup
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(pointblank)
+
+# Read data from S3 TODO: UPDATE THIS
+data <- read_csv("~/ds-workflows-r/data/posit_cola_sales_data.csv")
+
+```
+
+We will want to verify our column schema matches what is expected. Let's define our schema for use in our validation plan.
+
+```{r}
+# define our column schema, which we will use in validation
+schema_data <- col_schema(
+  date = "Date",
+  product = "character", 
+  region = "character",
+  store_type = "character",
+  store_id = "numeric",
+  units_sold = "numeric",
+  unit_price = "numeric",
+  revenue = "numeric",
+  promotion = "character"
+)
+```
+
+## Task 1 - Create a validation plan
+
+To create a validation plan using `pointblank` we need to:
+
+-   create an agent
+-   define validations
+
+```{r}
+#| label: create agent for posit cola data
+
+agent <- pointblank::create_agent(____)
+agent
+```
+
+On its own, the agent is not very informative. It's waiting for validations to be defined and an interrogation action to be performed.
+
+Now we define our **data validation functions**. A few have been started for you as examples. It's up to you to fill in the suggested validations. Refer to the package documentation for the validation function reference: <https://rstudio.github.io/pointblank/reference/index.html#validation-expectation-and-test-functions>
+
+```{r}
+#| label: define validations for posit cola sales data
+
+agent <- create_agent(data, label = "Cola Sales Data Validation") |> 
+  # Verify schema
+  col_schema_match(schema_data) |>
+  # Required fields are present
+  col_vals_not_null(columns = c(date, product, region, store_id, units_sold, unit_price)) |>
+  # Ensure all rows are distinct (no dupliates)
+  ____ |>
+  # Validate that `units_sold`, `unit_price`, and `revenue` are reasonable values
+  ____ |>
+  ____ |>
+  ____ |>
+  # Validate product names are among the expected set of names
+  ____ |>
+  # Validate date is in expected range
+  ____ |>
+  # What else would you validate?
+  ____ |> 
+  ____ 
+
+
+agent
+
+```
+
+If we look at the output of `agent`, it shows our validation plan, but the action is yet to come. Next step is to run it with **interrogate**!
+
+## Task 2 - Run validation plan
+
+We use the `interrogate` function to run agent through the validation plan.
+
+```{r}
+#| label: interrogate 
+
+agent <- agent |> interrogate()
+
+agent
+```
+
+Explore the validation report. Can you:
+
+1.  Identify what fail percentage each validation had?
+2.  Identify how many rows failed each validation?
+3.  View the CSV extracts of failed data?
+
+Change the parameters of your validations to trigger more failures just to see the consequence.
+
+## Task 3 - Remove failing data from the data set
+
+Pointblank has identified all of the rows of `data` that passed and failed validation. Now remove those that failed so the data that is passed downstream to our modeling step is squeaky clean.
+
+Pointblank provides a number of [post-interrogation functions](https://rstudio.github.io/pointblank/reference/index.html#post-interrogation) to work with intel gathered from the validation. For this task, we will "sunder" the data using `pointblank::get_sundered_data()`.
+
+> **💡 sunder** /sun·der / ˈsən-dər / *verb* \| to split apart
+
+```{r}
+#| label: sunder data
+
+# Passed data
+data_validated <- get_sundered_data(agent = ____, type = "____")
+
+# Failed data
+data_faulty <- get_sundered_data(agent = ____, type = "____")
+
+```
+
+## Task 4 - Post-interrogation logicals
+
+Pointblank interrogation provides multiple layers of information about our data. We can take advantage of this with logical TRUE / FALSE statements that drive downstream tasks or effects.
+
+-   Use `pointblank::all_passed()` to determine if all validation steps passed
+
+-   Use `pointblank::get_agent_x_list` to determine if any warnings were set
+
+```{r}
+#| label: All validations passed?
+
+# Did all validations pass?
+pointblank::____
+
+```
+
+A broad all passed / failed for the entire validation plan might not provide enough granularity for a downstream task. We can drill into more details about each step of the validation and the results using the agent "x_list".
+
+First we will see what the x_list contains.
+
+```{r}
+#| label: get agent x list
+
+xlist <- pointblank::get_agent_x_list(agent)
+
+xlist
+
+```
+
+The output is like a gold mine! The resulting list includes the pass / fail statistics (e.g., `$n_passed`, `$n_failed`, `$f_passed`, `$f_failed`). Take a look:
+
+```{r}
+#| label: extract the pass / fail statistics
+
+xlist$____
+
+```
+
+The xlist also includes which records triggered a threshold for `warn`, `stop`, or `notify` -- things we will talk about next when we talk about alerting!
