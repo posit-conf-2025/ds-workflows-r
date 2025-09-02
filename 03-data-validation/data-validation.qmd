@@ -1,7 +1,7 @@
 ---
 title: "Validate Cola Sales Data"
 format:
-  email:
+  html:
     toc: true
     toc-location: left
     anchor-sections: true
@@ -10,6 +10,8 @@ format:
     code-summary: "Show Code"
     code-tools: true
     code-link: true
+execute:
+    eval: false
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -28,11 +30,31 @@ The goals of this activity are to:
 ```{r}
 #| label: setup
 
+library(paws)
 library(tidyverse)
 library(pointblank)
 
-# Read data from S3 TODO: UPDATE THIS
-data <- read_csv("~/ds-workflows-r/data/posit_cola_sales_data.csv")
+```
+
+Load the cola sales data.
+
+```{r}
+#| label: load-data
+
+# Make a client service to interact with S3
+s3_client <- paws::s3()
+
+# Bucket information
+bucket_name <- "ptd-demo-bucket"
+file_key <- "posit_cola_sales_data.csv"       
+
+# Read the data from S3
+response <- s3_client$get_object(
+Bucket = bucket_name,
+Key = file_key
+)
+
+data <- read_csv(rawToChar(response$Body))
 
 ```
 
