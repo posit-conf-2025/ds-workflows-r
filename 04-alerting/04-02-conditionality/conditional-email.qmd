@@ -1,71 +1,97 @@
 ---
 title: A slightly more complex email from Quarto
 format: email
-editor: visual
 ---
 
-This is a slightly more complex report using Quarto. This time, add the following to the email structure below:
+This is a slightly more complex report using Quarto. This time, modify the email below to add:
 
 -   A `{.email-scheduled}` div containing a code chunk that, when evaluated as something "truthy", will send an email; when evaluated as something "falsy", will suppress the email
 
--   A `{.content-visible when-meta="verbose"}` div that will add additional data to your email when a metadata parameter named "verbose" is "true"
+-   A `{.content-visible when-meta="give_praise"}` div that will include noted code block in the email when a metadata parameter named "give_praise" is "true"
 
-Helper:
+## Setup
+
+```{r}
+#| label: setup
+
+library(quarto)
+library(glue)
+library(lubridate)
+library(praise)
+```
+
+## Helpers
+
+1. We'll define a logical that we can use in the {.email-scheduled} block.
+
+```{r}
+
+send_email <- sample(c(TRUE, FALSE), 1)
+
+```
+
+2. Conditionally write metadata that will dictate whether the email will have additional information. 
 
 The R package `{quarto}` includes a number of Quarto CLI wrappers and helpers, including a function `write_yaml_metadata_block` which will allow dynamic creation of metadata that is read at document render.
 
 **Importantly, in the code block, you must include `#| output: asis` for correct rendering.**
 
-Let's write our metadata.
+Here's how it's done.
 
 ```{r}
 #| output: asis
 
-quarto::write_yaml_metadata_block(
-    verbose = "TRUE"
-)
+include_praise <- sample(c(TRUE, FALSE), 1)
+
+if (include_praise) {
+  quarto::write_yaml_metadata_block(
+    give_praise = TRUE
+  )
+}
 
 ```
 
-Which will include a YAML metadata field of `verbose: true` in our Quarto document. This can now be used for our conditionality.
+
+This will include a YAML metadata field of `give_praise: true` in our Quarto document if it is a Monday or Tuesday. 
+
+## Your turn
 
 :::: email
+
+<!-- Add your `{.email-scheduled}` div here.  -->
+
 ::: subject
-Hello from Quarto, conditionally
+Surprise! It's a random "Hello" from Quarto!
 :::
 
-This is the main body of the email. But if we have the "verbose" metadata parameter set to `true`, then more detail will follow!
+Today is a lucky day! 
+
+You might also get a compliment if the conditions are right.
+
+<!-- Surround the praise block below with  a `{.content-visible when-meta="give_praise"}` div so it is conditionally included  -->
+
+```{r}
+#| echo: false
+#| results: asis
+
+glue::glue("🥠  ", praise::praise(), "  🥠")
+
+```
+
+
 ::::
 
-````{=html}
 
-<!-- Hint: 
+## 💡 Tip!
+Include logging info in your reports. This is very useful when looking at historical renders on Connect.
 
-:::::: {.email}
-::: {.email-scheduled}
-```{r}
-TRUE
-```
+**Report run** `{r} lubridate::now()`
 
-:::
+**Conditions set:** `{r} glue::glue("send_email: " , {send_email}, " | ", "include_praise: ", {include_praise})`
 
-::: {.subject}
-Hello from Quarto, conditionally
-:::
+You can embed the rendered email in your report using an html iframe. This makes it easy to preview the result and also makes your historical reports more informative. 
 
-This is the main body of the email. But if we have the "verbose" metadata parameter set to `true`, then more detail will follow!
 
-::: {.content-visible when-meta="verbose"}
-Here is some interesting data:
+**Email preview:**
 
-```{r}
-library(gt)
-
-head(mtcars) |> gt()
-```
-
-:::
-::::::
-
--->
-````
+<iframe src="email-preview/index.html" width=500 height =500></iframe>

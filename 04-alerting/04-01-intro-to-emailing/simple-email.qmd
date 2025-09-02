@@ -19,21 +19,3 @@ cars_table
 ```
 
 If you're in Visual Editor mode, type /div to insert a div and specify the Classes .email and .subject for your email. If you're in source mode, use ::: {.email} or :::{.subject} to open your div, and ::: to close it.
-
-```{=html}
-<!-- Hint: 
-
-::: {.email}
-
-:::{.subject}
-Hello from Quarto
-:::
-
-Here is the body of my email! 
-
-
-
-::: 
-
--->
-```
