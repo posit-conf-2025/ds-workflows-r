@@ -10,6 +10,7 @@ format:
     code-summary: "Show Code"
     code-tools: true
     code-link: true
+    
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -36,6 +37,7 @@ The goals of this activity are to:
 ```{r}
 #| label: setup
 
+library(paws)
 library(tidyverse)
 library(skimr)
 library(pointblank)
@@ -50,9 +52,20 @@ Load the cola sales data and get an initial understanding of its structure.
 ```{r}
 #| label: load-data
 
-# TODO: CHANGE THIS TO READ FROM A SHARED DATA STORE
-# Load the cola sales data
-data <- read_csv("~/ds-workflows-r/data/posit_cola_sales_data.csv")
+# Make a client service to interact with S3
+s3_client <- paws::s3()
+
+# Bucket information
+bucket_name <- "ptd-demo-bucket"
+file_key <- "posit_cola_sales_data.csv"       
+
+# Read the data from S3
+response <- s3_client$get_object(
+Bucket = bucket_name,
+Key = file_key
+)
+
+data <- read_csv(rawToChar(response$Body))
 
 # Preview the data
 data
@@ -69,7 +82,7 @@ You can access the data explorer by:
 
 -   `View(data)`
 
--   Open the file from the File Explorer
+-   Open a file from the File Explorer
 
 **Your turn!** Open the `data` data frame in the Data Explorer and get to know the data. Ideas:
 
@@ -83,11 +96,15 @@ You can access the data explorer by:
 
 There are some useful R packages to add to your toolbox when conducting data exploration. Let's play with `skimr` and `pointblank`. These both create polished outputs when included in a rendered document, making them excellent options for project documentation.
 
+### Skimr
+
 ```{r}
 #| label: skimr
 
 skimr::skim(data)
 ```
+
+### Pointblank
 
 The `pointblank::scan_data()` function provides a HTML report of the input data to help you understand your data. It contains 6 sections:
 
@@ -100,9 +117,9 @@ The `pointblank::scan_data()` function provides a HTML report of the input data 
 
 ⚠️ The "Correlations" and "Interactions" sections take the longest to run, especially on a larger data set. Save time by omitting sections that are not needed.
 
-```{-}
-{r}
+```{r}
 #| label: pointblank::scan_data
+#| eval: false
 
 # specify the sections of interest for the data scan. 
 # ⚠️ "I" and "C" can take multiple minutes to run! Omit these for the sake of time.

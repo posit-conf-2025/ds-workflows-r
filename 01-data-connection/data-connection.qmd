@@ -5,7 +5,7 @@ format:
     toc: true
     toc-location: left
     anchor-sections: true
-    code-fold: true
+    code-fold: false
     code-overflow: wrap
     code-summary: "Show Code"
     code-tools: true
@@ -45,6 +45,7 @@ The goals of this activity are to:
 #| label: load required packages
 
 library(paws)
+library(tidyverse)
 
 ```
 
@@ -58,7 +59,6 @@ Check it out:
 
 ```{r}
 #| label: verify-credentials
-#| eval: false
 
 # STS is the AWS Security Token Service
 # We'll make a client service to interact with STS
@@ -88,17 +88,24 @@ Now let's read our project data from an AWS S3 bucket using our managed credenti
 
 ```{r}
 #| label: read-s3
-#| eval: false
 
 # Make a client service to interact with S3
 # Notice we don't have to manually specify any credential information!
 s3_client <- paws::s3()
 
 # Bucket information
-bucket_name <- "ds-workflows-wkshp"  
-region <- "us-east-2"       
+bucket_name <- "ptd-demo-bucket"
+file_key <- "posit_cola_sales_data.csv"
 
 # Read the data from S3
 
-data <- s3_client$head_bucket(Bucket = bucket_name)
+response <- s3_client$get_object(
+  Bucket = bucket_name,
+  Key = file_key
+)
+
+data <- read_csv(rawToChar(response$Body))
+
+data
+
 ```
