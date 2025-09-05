@@ -36,29 +36,28 @@ Before starting this activity, we need to create and save a Posit Connect API ke
 usethis::edit_r_environ()
 ```
 
-Once you run the above command, you should see a new file open up in RStudio. This is your `.Renviron` file and is usually located in your home (\~) directory. Before we set the variable, we first need to obtain an API key from Connect. Follow the steps below:
+Once you run the above command, you should see a new file open up in Positron. This is your `.Renviron` file and is usually located in your home (\~) directory. Before we set the variable, we first need to obtain an API key from Connect. Follow the steps below:
 
-1.  Navigate to Posit Connect (TODO: add URL for Connect Server).
+1.  Navigate to Posit Connect: https://pub.workshop.posit.team/.
 2.  Click your username in the top right corner.
 3.  Select **API Keys**
 4.  Select **+New API Key**
 5.  Name it whatever you like. `Connect-API-Key` is a good option.
 6.  Copy the new API key. **DON'T LOSE IT!** If you do lose it, you can create another one.
 
-Navigate back to your `.Renviron` file and add the following line. It's always a good idea to add an additional blank line at the end of your `.Renviron` file. Let's also add the CONNECT_SERVER URL just for good measure!
+Navigate back to your `.Renviron` file and add the following line. It's always a good idea to add an additional blank line at the end of your `.Renviron` file.
 
 ```         
-CONNECT_API_KEY=paste-your-api-key-here
-CONNECT_SERVER=TODO: Add URL for Connect Server
+CONNECT_API_KEY="paste-your-api-key-here"
 ```
 
-Now you can close the `.Renviron` file and restart your R session (Session–\>Restart R) so that the API key varialble get's added to our environment. To confirm it worked, try running the following code:
+Now you can close the `.Renviron` file and restart your R session (the refresh icon in your console) so that the API key varialble get's added to our environment. To confirm it worked, try running the following code:
 
 ```{r}
 # Check if CONNECT_API_KEY is added to environment
 Sys.getenv("CONNECT_API_KEY")
 
-# Check if CONNECT_SERVER is added to environment
+# Also check if CONNECT_SERVER is in your environment
 Sys.getenv("CONNECT_SERVER")
 ```
 
@@ -74,6 +73,12 @@ library(dplyr)
 library(readr)
 library(vetiver)
 library(pins)
+library(plumber)
+library(rsconnect)
+library(ranger)
+
+# Username
+username <- "____" # Add in your username
 ```
 
 [Tidymodels](https://www.tidymodels.org/) is a collection of R packages for modeling and machine learning using [tidyverse](https://www.tidyverse.org/) principles. While this workshop is **not** a modeling workshop, to demonstrate the utility of the `vetiver`, we need to create a model.
@@ -94,7 +99,6 @@ For this activity, we will train and fit a logistic regression model to predict 
 # Read in the posit-cola sales data
 posit_cola_data <- read_csv("../tmp-data/posit_cola_sales_data_clean.csv")
 ```
-
 
 ```{r}
 #| label: explore-data
@@ -142,7 +146,6 @@ cat("Test set size:", nrow(test_data), "\n")
 
 #### Create the recipe
 
-
 ```{r}
 #| label: create-recipe
 
@@ -154,7 +157,6 @@ revenue_recipe <- recipe(revenue ~ ., data = train_data) |>
   step_normalize(all_numeric_predictors())
 ```
 
-
 #### Define model type
 
 ```{r}
@@ -165,7 +167,6 @@ linear_model <- linear_reg() |>
   set_engine("lm") |>
   set_mode("regression")
 ```
-
 
 #### Create the workflow
 
@@ -271,24 +272,25 @@ APIs are a great way for users, applications, or other systems to interact with 
 
 **Be sure to add your user name for the pin!**
 
-**Be sure to add your user name for the pin!**
-
 ```{r}
 #| label: create-api
 
 # Create API from pinned model using vetiver
-#  Swap out "____" for your username on Connect.
-vetiver_deploy_rsconnect(board = board, name = "____/posit_cola_revenue_model")
+vetiver_deploy_rsconnect(
+  board = board, 
+  name = paste0(username, "/posit_cola_revenue_model"), 
+  account = username,
+  predict_args = list(debug = TRUE))
 ```
 
 Once it's deployed, navigate to the API on Posit Connect and give it a test run! Click the operation on the left called `Return predictions from model using 5 features`. Then copy any variation of the request below and click **Try**. You should see a response of the predicted revenue:
 
-```
+```         
 [
   {
     "units_sold": 150,
     "unit_price": 2.00,
-    "product": "Sprite",
+    "product": "Posit Classic",
     "region": "Europe",
     "store_type": "Supermarket"
   }
@@ -319,7 +321,7 @@ Below is a data frame representing information for a Posit Cola sale. Let's see 
 new_sale <- tibble(
   units_sold = 300,
   unit_price = 1.50,
-  product = "Sprite",
+  product = "Posit Classic",
   region = "Europe",
   store_type = "Supermarket"
 )
@@ -360,11 +362,10 @@ We only have 1 version of our model, but let's list it anyway by using the `pin_
 #| label: list-pin-versions
 
 # View versions of your model 
-#  Replace "____" with your username 
-pin_versions(board = board, name = "____/posit_cola_revenue_model")
+pin_versions(board = board, name = paste0(username, "posit_cola_revenue_model"))
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = "____/posit_cola_revenue_model")$description
+pin_meta(board = board, name = paste0(username, "posit_cola_revenue_model"))$description
 ```
 
 #### Create Another Model (Random forest)
@@ -407,6 +408,7 @@ print(model_metrics_rf)
 ```
 
 #### Pin the random forest model to Posit Connect
+
 Now that we have a new model, we can pin it to Posit Connect as well. This will allow us to version the model and monitor its performance over time. We'll pin it using the `vetiver` package to the same location as our previous model.
 
 ```{r}
@@ -422,29 +424,29 @@ vetiver_model_rf <- vetiver_model(
 board |> vetiver_pin_write(vetiver_model_rf)
 
 # View versions of your model
-pin_versions(board = board, name = "____/posit_cola_revenue_model")
+pin_versions(board = board, name = paste0(username, "posit_cola_revenue_model"))
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = "____/posit_cola_revenue_model")$description
+pin_meta(board = board, name = paste0(username, "posit_cola_revenue_model"))$description
 ```
 
 #### Monitor Model Performance
 
 How do we know which model is performing better? Logistic regression or random forests? That's where model monitoring comes into play.
 
-❗Be sure add in the version number as a string (eg. "557741").
+❗Be sure add in the version number as a string (eg. "536").
 
 ```{r}
 #| label: monitor-model-performance
 
 # Read in monitoring data
-monitoring_data <- read_csv("data/posit_cola_sales_monitoring_data.csv")
+monitoring_data <- read_csv("../tmp-data/posit_cola_sales_monitoring_data.csv")
 
 # Load the vetiver model
-vetiver_model_lm <- vetiver_pin_read(board, "____/posit_cola_revenue_model", version = "758134")
+vetiver_model_lm <- vetiver_pin_read(board, paste0(username, "posit_cola_revenue_model"), version = "____")
 
 # Load the vetiver model rf
-vetiver_model_rf <- vetiver_pin_read(board, "____/posit_cola_revenue_model", version = "758136")
+vetiver_model_rf <- vetiver_pin_read(board, paste0(username, "posit_cola_revenue_model"), version = "____")
 
 # Compute metrics for the logistic regression model
 sales_revenue_metrics_lm <-
@@ -494,5 +496,4 @@ combined_metrics |>
     plot.title = element_text(size = 14, face = "bold"),
     plot.subtitle = element_text(size = 12)
   )
-
 ```
