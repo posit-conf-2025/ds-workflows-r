@@ -34,6 +34,9 @@ Before starting this activity, we need to create and save a Posit Connect API ke
 
 # Open your .Renviron file
 usethis::edit_r_environ()
+
+# If Positron does not open the file, use the command pallete (Cmd/Ctrl + Shift + P) to "File: Open File"
+#  and select the `.Renviron` file in your "home/username" directory.
 ```
 
 Once you run the above command, you should see a new file open up in Positron. This is your `.Renviron` file and is usually located in your home (\~) directory. Before we set the variable, we first need to obtain an API key from Connect. Follow the steps below:
