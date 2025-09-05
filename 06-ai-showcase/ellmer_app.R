@@ -1,6 +1,8 @@
 library(shiny)
 library(shinychat)
+library(httr2)
 library(ellmer)
+library(paws)
 
 ui <- fluidPage(
   chat_ui("chatbot",
@@ -11,9 +13,11 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   # Per-session conversation object using Anthropic's Claude
-  chat <- chat_anthropic(system_prompt = "You are a helpful and concise sales assistant. 
+  chat <- chat_aws_bedrock(
+    system_prompt = "You are a helpful and concise sales assistant. 
   You're goal is to search the internet to figure out where people drink the most soda.
-  The goal is to figure out where to sell a new soda brand called Posit Cola")
+  The goal is to figure out where to sell a new soda brand called Posit Cola",
+    model = "us.anthropic.claude-sonnet-4-20250514-v1:0")
   
   observeEvent(input$chatbot_user_input, {
     # Stream response as user enters a message
