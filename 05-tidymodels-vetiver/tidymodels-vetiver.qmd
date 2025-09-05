@@ -92,7 +92,7 @@ For this activity, we will train and fit a logistic regression model to predict 
 #| label: read-data
 
 # Read in the posit-cola sales data
-posit_cola_data <- read_csv("data/posit_cola_sales_data.csv")
+posit_cola_data <- read_csv("../tmp-data/posit_cola_sales_data_clean.csv")
 ```
 
 
@@ -251,7 +251,7 @@ board <- board_connect()
 board |> vetiver_pin_write(vetiver_model)
 ```
 
-Navigate to Posit Connect and check out your pinned model! You'll also notice a message asking you to create a **Model Card**. This is alsways a good idea, especially if you will be sharing your model with others. An example model card can be found here: `materials/04-tidymodels-vetiver/ferry_modelcard_r.Rmd`.
+Navigate to Posit Connect and check out your pinned model! You'll also notice a message asking you to create a **Model Card**. This is alsways a good idea, especially if you will be sharing your model with others.
 
 🛑 Stop here!
 
@@ -278,7 +278,7 @@ APIs are a great way for users, applications, or other systems to interact with 
 
 # Create API from pinned model using vetiver
 #  Swap out "____" for your username on Connect.
-vetiver_deploy_rsconnect(board = board, name = "ryan/posit_cola_revenue_model")
+vetiver_deploy_rsconnect(board = board, name = "____/posit_cola_revenue_model")
 ```
 
 Once it's deployed, navigate to the API on Posit Connect and give it a test run! Click the operation on the left called `Return predictions from model using 5 features`. Then copy any variation of the request below and click **Try**. You should see a response of the predicted revenue:
@@ -302,7 +302,7 @@ On Posit Connect, navigate to your newly created API, and copy the URL for the c
 ```{r}
 #| label: create-endpoint
 
-api_url <- "https://connect.posit.it/content/d38c29b8-250f-4a22-ba05-4ff4a49f0304"
+api_url <- "____" # Replace "____" with your API URL
 
 # Append "/predict" to the end of your api to create the endpoint
 endpoint <- vetiver_endpoint(paste0(api_url, "/predict"))
@@ -361,10 +361,10 @@ We only have 1 version of our model, but let's list it anyway by using the `pin_
 
 # View versions of your model 
 #  Replace "____" with your username 
-pin_versions(board = board, name = "ryan/posit_cola_revenue_model")
+pin_versions(board = board, name = "____/posit_cola_revenue_model")
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = "ryan/posit_cola_revenue_model")$description
+pin_meta(board = board, name = "____/posit_cola_revenue_model")$description
 ```
 
 #### Create Another Model (Random forest)
@@ -422,10 +422,10 @@ vetiver_model_rf <- vetiver_model(
 board |> vetiver_pin_write(vetiver_model_rf)
 
 # View versions of your model
-pin_versions(board = board, name = "ryan/posit_cola_revenue_model")
+pin_versions(board = board, name = "____/posit_cola_revenue_model")
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = "ryan/posit_cola_revenue_model")$description
+pin_meta(board = board, name = "____/posit_cola_revenue_model")$description
 ```
 
 #### Monitor Model Performance
@@ -441,10 +441,10 @@ How do we know which model is performing better? Logistic regression or random f
 monitoring_data <- read_csv("data/posit_cola_sales_monitoring_data.csv")
 
 # Load the vetiver model
-vetiver_model_lm <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "758134")
+vetiver_model_lm <- vetiver_pin_read(board, "____/posit_cola_revenue_model", version = "758134")
 
 # Load the vetiver model rf
-vetiver_model_rf <- vetiver_pin_read(board, "ryan/posit_cola_revenue_model", version = "758136")
+vetiver_model_rf <- vetiver_pin_read(board, "____/posit_cola_revenue_model", version = "758136")
 
 # Compute metrics for the logistic regression model
 sales_revenue_metrics_lm <-
