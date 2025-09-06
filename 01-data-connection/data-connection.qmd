@@ -46,10 +46,11 @@ The goals of this activity are to:
 
 library(paws)
 library(tidyverse)
+library(connectapi)
 
 ```
 
-## Task 1 - Verify credentials
+## Task 1 - Verify credentials in Workbench
 
 If you started your development session with AWS Managed Credentials, Workbench has already populated your session with your AWS credentials using a short-lived access token. But don't worry, Workbench is managing the refresh of your token so you can work uninterrupted! AWS SDKs and the AWS CLI detect this token automatically, so connections will *just work*. ✨
 
@@ -59,6 +60,9 @@ Check it out:
 
 ```{r}
 #| label: verify-credentials
+#| eval: false
+
+# (Workshop note: we set `eval: false` because we just want to run this interactively. We don't want it to run when we publish this report to Connect)
 
 # STS is the AWS Security Token Service
 # We'll make a client service to interact with STS
@@ -80,6 +84,35 @@ $Account
 
 $Arn
 [1] "arn:aws:sts::123456789012:assumed-role/example-role-name/user.name"
+```
+
+## Task 1.5 - Fetch credentials when deployed to Connect
+
+In Workbench, credentials "just work" because you are working in your own interactive session running in a distinct R process and environment.
+
+When content runs on Connect, many users might share the runtime environment for their own sessions. So for security, the target system's credential can't be stored ambiently in the environment. There's a credential fetch process we'll perform to trade a non-sensitive session token that is available in the environment for the target credential we want.
+
+On Connect, the context is different. Many users might share the same runtime environment. For security, a powerful credential like an OAuth access token can't be stored directly in that shared space. Instead, our code performs a secure exchange: it trades a temporary **session token** (which is safely available) for the powerful **target credential**. This makes the credential available only in the content session that the user is running.
+
+Here's how we exchange the content session token for AWS credentials:
+
+```{r}
+#| label: connect-credentials
+
+# Exchange token for AWS credentials when running on Connect
+if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
+  client <- connectapi::connect()
+  # exchange the session token for the AWS credentials
+  credentials <- get_aws_content_credentials(client)
+  
+  # set the credentials as environment variables for the session
+  Sys.setenv(
+    AWS_ACCESS_KEY_ID = credentials$access_key_id,
+    AWS_SECRET_ACCESS_KEY = credentials$secret_access_key,
+    AWS_SESSION_TOKEN = credentials$session_token,
+    AWS_REGION = "us-east-2"
+  )
+}
 ```
 
 ## Task 2 - Read data from S3
@@ -109,3 +142,12 @@ data <- read_csv(rawToChar(response$Body))
 data
 
 ```
+
+## Task 3 - Publish to Posit Connect
+
+Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment. 
+
+1. **Deployment** > **Create New Deployment** > Select `data-connection.qmd` as the entrypoint file > **Publish document with source code** > enter a title > press **Enter** to select `pub.workshop.posit.team` as the destination
+2. (One time only) Add your Posit Connect API key
+3. Configure deployment options
+4. Deploy
