@@ -1,0 +1,85 @@
+---
+title: "Exploring Diamond Data"
+author: "Data Scientist"
+format: 
+  html:
+    code-fold: true
+    toc: true
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+library(ggplot2)
+library(dplyr)
+library(gt)
+```
+
+## Introduction
+
+This document explores the `diamonds` dataset, which contains information about diamond prices and characteristics. The relationship between price and various attributes can be expressed using the following equation:
+
+$$
+\text{Price} = \beta_0 + \beta_1\text{Carat} + \beta_2\text{Cut} + \epsilon
+$$
+
+## Data Visualization
+
+Let's create a sophisticated visualization of diamond prices by carat and cut:
+
+```{r}
+#| label: price-plot
+#| fig-cap: "Relationship between diamond price, carat weight, and cut quality"
+#| fig-width: 10
+#| fig-height: 6
+
+diamonds |>
+  ggplot(aes(x = carat, y = price, color = cut)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  labs(
+    title = "Diamond Price by Carat and Cut",
+    x = "Carat",
+    y = "Price",
+    color = "Cut Quality"
+  )
+```
+
+## Summary Statistics
+
+Here's a table showing the average price and count of diamonds by cut:
+
+```{r}
+#| label: summary-table
+#| tbl-cap: "Summary statistics of diamond prices by cut quality"
+
+diamonds |>
+  group_by(cut) |>
+  summarize(
+    `Average Price` = mean(price),
+    `Number of Diamonds` = n()
+  ) |> 
+  gt() |>
+  fmt_currency(
+    columns = `Average Price`,
+    decimals = 2,
+    currency = "USD"
+  ) |>
+  tab_header(
+    title = "Diamond Prices by Cut",
+    subtitle = "Average price and count for each cut quality"
+  )
+```
+
+::: {.callout-note}
+## Key Insight
+Premium cut diamonds aren't always the most expensive. Factors like carat weight often have a stronger influence on price.
+:::
+
