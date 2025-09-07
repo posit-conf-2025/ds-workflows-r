@@ -60,6 +60,13 @@ This will include a YAML metadata field of `give_praise: true` in our Quarto doc
 
 <!-- Add your `{.email-scheduled}` div here.  -->
 
+::: {.email-scheduled}
+
+```{r}
+send_email
+```
+:::
+
 ::: subject
 Surprise! It's a random "Hello" from Quarto!
 :::
@@ -70,6 +77,8 @@ You might also get a compliment if the conditions are right.
 
 <!-- Surround the praise block below with  a `{.content-visible when-meta="give_praise"}` div so it is conditionally included  -->
 
+::: {.content-visible when-meta="give_praise"}
+
 ```{r}
 #| echo: false
 #| results: asis
@@ -78,6 +87,7 @@ glue::glue("🥠  ", praise::praise(), "  🥠")
 
 ```
 
+:::
 
 ::::
 

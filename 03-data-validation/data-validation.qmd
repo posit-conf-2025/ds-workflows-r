@@ -12,7 +12,6 @@ format:
     code-link: true
 execute:
     eval: false
-editor: visual
 editor_options: 
   chunk_output_type: console
   canonical: true
@@ -138,7 +137,7 @@ Explore the validation report. Can you:
 
 1.  Identify what fail percentage each validation had?
 2.  Identify how many rows failed each validation?
-3.  View the CSV extracts of failed data?
+3.  Notice the left-hand side color bands to indicate pass condition?
 
 Change the parameters of your validations to trigger more failures just to see the consequence.
 
@@ -194,6 +193,10 @@ The output is like a gold mine! The resulting list includes the pass / fail stat
 
 ```{r}
 #| label: extract the pass / fail statistics
+
+xlist$n_passed
+
+xlist$n_failed
 
 xlist$____
 

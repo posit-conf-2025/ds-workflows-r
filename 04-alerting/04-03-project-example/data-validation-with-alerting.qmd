@@ -92,7 +92,7 @@ agent <- create_agent(data, label = "Cola Sales Data Validation") |>
   # Verify schema
   col_schema_match(
     schema_data,
-    # use 1 failure as a threshold for a stop flag
+    # 👉 use 1 failure as a threshold for a stop flag
     actions = action_levels(stop_at = 1)
   ) |>
   # Required fields are present
