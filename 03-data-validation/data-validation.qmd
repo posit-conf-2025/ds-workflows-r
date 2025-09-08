@@ -32,7 +32,6 @@ The goals of this activity are to:
 library(paws)
 library(tidyverse)
 library(pointblank)
-
 ```
 
 Load the cola sales data.
@@ -58,6 +57,13 @@ data <- read_csv(rawToChar(response$Body))
 ```
 
 We will want to verify our column schema matches what is expected. Let's define our schema for use in our validation plan.
+
+```{r}
+# Two helpful functions for understanding the column types
+data |> glimpse()
+
+data |> spec()
+```
 
 ```{r}
 # define our column schema, which we will use in validation
@@ -116,8 +122,11 @@ agent <- create_agent(data, label = "Cola Sales Data Validation") |>
 
 
 agent
-
 ```
+
+Tip: Use the Positron Assistant to generate the additional validations:
+
+> Complete the missing validations as documented in the comments.
 
 If we look at the output of `agent`, it shows our validation plan, but the action is yet to come. Next step is to run it with **interrogate**!
 
@@ -186,7 +195,6 @@ First we will see what the x_list contains.
 xlist <- pointblank::get_agent_x_list(agent)
 
 xlist
-
 ```
 
 The output is like a gold mine! The resulting list includes the pass / fail statistics (e.g., `$n_passed`, `$n_failed`, `$f_passed`, `$f_failed`). Take a look:
@@ -199,7 +207,6 @@ xlist$n_passed
 xlist$n_failed
 
 xlist$____
-
 ```
 
 The xlist also includes which records triggered a threshold for `warn`, `stop`, or `notify` -- things we will talk about next when we talk about alerting!
