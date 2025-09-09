@@ -101,7 +101,13 @@ Here's how we exchange the content session token for AWS credentials:
 
 # Exchange token for AWS credentials when running on Connect
 if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
+  
+  # Show that we are running in Posit Connect
+  print("This code is running in Posit Connect!")
+
+  # Create the Posit Connect client
   client <- connectapi::connect()
+    
   # exchange the session token for the AWS credentials
   credentials <- get_aws_content_credentials(client)
   
