@@ -35,10 +35,33 @@ library(pointblank)
 library(quarto)
 library(glue) 
 library(gt)
+library(connectapi)
 
 ```
 
 Load the cola sales data.
+
+```{r}
+#| label: if Connect, exchange content token for OAuth credential
+
+# if running on Connect, retrive credentials from OAuth integration
+if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
+
+# init Posit Connect API client
+  
+  client <- connect()
+  credentials <- get_aws_content_credentials(client)
+
+
+  Sys.setenv(
+  AWS_ACCESS_KEY_ID = credentials$access_key_id,
+  AWS_SECRET_ACCESS_KEY = credentials$secret_access_key,
+  AWS_SESSION_TOKEN = credentials$session_token, 
+  AWS_REGION = "us-east-2"
+  )
+
+}
+```
 
 ```{r}
 #| label: load-data
