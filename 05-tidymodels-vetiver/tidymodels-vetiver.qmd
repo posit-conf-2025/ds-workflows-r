@@ -79,6 +79,7 @@ library(pins)
 library(plumber)
 library(rsconnect)
 library(ranger)
+library(paws)
 
 # Username
 username <- "____" # Add in your username
@@ -97,11 +98,24 @@ For this activity, we will train and fit a logistic regression model to predict 
 #### Read and Explore the Data
 
 ```{r}
-#| label: read-data
+#| label: load-data-from-s3
 
-# Read in the posit-cola sales data
-posit_cola_data <- read_csv("../tmp-data/posit_cola_sales_data_clean.csv")
+# Make a client service to interact with S3
+s3_client <- paws::s3()
+
+# Bucket information
+bucket_name <- "ptd-demo-bucket"
+file_key <- "posit_cola_sales_data_validated.csv"
+
+# Read the data from S3
+response <- s3_client$get_object(
+Bucket = bucket_name,
+Key = file_key
+)
+
+posit_cola_data <- read_csv(rawToChar(response$Body))
 ```
+
 
 ```{r}
 #| label: explore-data
