@@ -48,7 +48,6 @@ if (include_praise) {
     give_praise = TRUE
   )
 }
-
 ```
 
 
@@ -91,8 +90,8 @@ glue::glue("🥠  ", praise::praise(), "  🥠")
 
 ::::
 
-
 ## 💡 Tip!
+
 Include logging info in your reports. This is very useful when looking at historical renders on Connect.
 
 **Report run** `{r} lubridate::now()`
