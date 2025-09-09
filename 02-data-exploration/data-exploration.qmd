@@ -1,20 +1,19 @@
 ---
 title: "Posit Cola Sales Data Exploration"
 format:
-html:
-toc: true
-toc-location: left
-anchor-sections: true
-code-fold: true
-code-overflow: wrap
-code-summary: "Show Code"
-code-tools: true
-code-link: true
-
+  html:
+    toc: true
+    toc-location: left
+    anchor-sections: true
+    code-fold: true
+    code-overflow: wrap
+    code-summary: "Show Code"
+    code-tools: true
+    code-link: true
 editor: visual
 editor_options:
-chunk_output_type: console
-canonical: true
+    chunk_output_type: console
+    canonical: true
 html-table-processing: none
 ---
 
@@ -29,8 +28,6 @@ The goals of this activity are to:
         -   `skimr::skim`
         -   `pointblank::scan_data`
 -   Bonus: generate a dynamic data dictionary for project documentation
-
-✏️ There will be placeholders (`____`) in the code cells below that you will need to fill in!
 
 ## Setup
 
@@ -119,7 +116,7 @@ The `pointblank::scan_data()` function provides a HTML report of the input data 
 
 ```{r}
 #| label: pointblank::scan_data
-#| eval: false
+
 
 # specify the sections of interest for the data scan. 
 # ⚠️ "I" and "C" can take multiple minutes to run! Omit these for the sake of time.
