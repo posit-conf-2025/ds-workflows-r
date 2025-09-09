@@ -92,6 +92,8 @@ You can access the data explorer by:
 
 -   Sort the data by multiple columns
 
+-   Tip! Use "Notebook Layout" for more screen real estate to explore the data. Afterwards, change back to the "Stacked Layout" for the 4-pane data science experience.
+
 ## Task 3 - Use R packages to profile the data
 
 There are some useful R packages to add to your toolbox when conducting data exploration. Let's play with `skimr` and `pointblank`. These both create polished outputs when included in a rendered document, making them excellent options for project documentation.
