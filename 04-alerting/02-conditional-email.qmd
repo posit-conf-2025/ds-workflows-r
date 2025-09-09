@@ -3,7 +3,7 @@ title: A slightly more complex email from Quarto
 format: email
 ---
 
-This is a slightly more complex report using Quarto. This time, modify the email below to add:
+This is a slightly more complex report using Quarto. It includes:
 
 -   A `{.email-scheduled}` div containing a code chunk that, when evaluated as something "truthy", will send an email; when evaluated as something "falsy", will suppress the email
 
@@ -25,9 +25,7 @@ library(praise)
 1. We'll define a logical that we can use in the {.email-scheduled} block.
 
 ```{r}
-
 send_email <- sample(c(TRUE, FALSE), 1)
-
 ```
 
 2. Conditionally write metadata that will dictate whether the email will have additional information. 
@@ -57,10 +55,7 @@ This will include a YAML metadata field of `give_praise: true` in our Quarto doc
 
 :::: email
 
-<!-- Add your `{.email-scheduled}` div here.  -->
-
 ::: {.email-scheduled}
-
 ```{r}
 send_email
 ```
@@ -74,8 +69,6 @@ Today is a lucky day!
 
 You might also get a compliment if the conditions are right.
 
-<!-- Surround the praise block below with  a `{.content-visible when-meta="give_praise"}` div so it is conditionally included  -->
-
 ::: {.content-visible when-meta="give_praise"}
 
 ```{r}
@@ -83,7 +76,6 @@ You might also get a compliment if the conditions are right.
 #| results: asis
 
 glue::glue("🥠  ", praise::praise(), "  🥠")
-
 ```
 
 :::
@@ -99,7 +91,6 @@ Include logging info in your reports. This is very useful when looking at histor
 **Conditions set:** `{r} glue::glue("send_email: " , {send_email}, " | ", "include_praise: ", {include_praise})`
 
 You can embed the rendered email in your report using an html iframe. This makes it easy to preview the result and also makes your historical reports more informative. 
-
 
 **Email preview:**
 
