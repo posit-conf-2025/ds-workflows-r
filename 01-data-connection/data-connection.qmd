@@ -146,14 +146,13 @@ response <- s3_client$get_object(
 data <- read_csv(rawToChar(response$Body))
 
 data
-
 ```
 
 ## Task 3 - Publish to Posit Connect
 
-Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment. 
+Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment.
 
-1. **Deployment** > **Create New Deployment** > Select `data-connection.qmd` as the entrypoint file > **Publish document with source code** > enter a title > press **Enter** to select `pub.workshop.posit.team` as the destination
-2. (One time only) Add your Posit Connect API key
-3. Configure deployment options
-4. Deploy
+1.  **Deployment** \> **Create New Deployment** \> Select `data-connection.qmd` as the entrypoint file \> **Publish document with source code** \> enter a title \> press **Enter** to select `pub.workshop.posit.team` as the destination
+2.  (One time only) Add your Posit Connect API key
+3.  Configure deployment options
+4.  Deploy
