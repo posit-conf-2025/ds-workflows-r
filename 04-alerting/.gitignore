@@ -1,5 +1,6 @@
 .output_metadata.json
 email-preview/
-*email_files/
+*_files/
 *.toml
 *.html
+*.csv
