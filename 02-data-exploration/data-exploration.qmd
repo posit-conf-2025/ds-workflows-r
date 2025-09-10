@@ -58,15 +58,14 @@ file_key <- "posit_cola_sales_data.csv"
 
 # Read the data from S3
 response <- s3_client$get_object(
-Bucket = bucket_name,
-Key = file_key
+  Bucket = bucket_name,
+  Key = file_key
 )
 
 data <- read_csv(rawToChar(response$Body))
 
 # Preview the data
 data
-
 ```
 
 ## Task 2 - Use the Positron Data Explorer
@@ -88,6 +87,8 @@ You can access the data explorer by:
 -   Add a filter
 
 -   Sort the data by multiple columns
+
+-   Tip! Use "Notebook Layout" for more screen real estate to explore the data. Afterwards, change back to the "Stacked Layout" for the 4-pane data science experience.
 
 ## Task 3 - Use R packages to profile the data
 

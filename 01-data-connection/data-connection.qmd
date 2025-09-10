@@ -23,7 +23,7 @@ Welcome to the Workbench Managed Credentials activity! A few points relevant to 
 
 1.  This Activity is a Quarto document, presented by default in the Visual Editor for readability
 2.  Run each code chunk interactively rather than rendering the document
-3.  Run the chunk by either clicking the green Play Button ▶︎ in the chunk's top right corner, or use the cmd+enter keyboard shortcut
+3.  Run the chunk by either clicking the green Play Button ▶︎ in the chunk's top right corner, or use the cmd+enter (Mac) / ctrl+enter (Windows) keyboard shortcut
 4.  We'll work through these activities mostly as a group, code-along style because our focus in this workshop is less about code development and more about around processes, tools, and learning concepts. We can best teach this if we do it together!
 5.  **Where's my output?** Are you a `Chunk Output Inline` kind of person? Sorry. For the Workshop, it's set by default to go the console because it requires less scrolling up/down to talk through things. If you hate it, you can change it. 😉
 
@@ -99,9 +99,15 @@ Here's how we exchange the content session token for AWS credentials:
 
 # Exchange token for AWS credentials when running on Connect
 if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
+  
+  # Show that we are running in Posit Connect
+  print("This code is running in Posit Connect!")
+
+  # Create the Posit Connect client
   client <- connectapi::connect()
+    
   # exchange the session token for the AWS credentials
-  credentials <- get_aws_content_credentials(client)
+  credentials <- connectapi::get_aws_content_credentials(client)
   
   # set the credentials as environment variables for the session
   Sys.setenv(
@@ -138,14 +144,13 @@ response <- s3_client$get_object(
 data <- read_csv(rawToChar(response$Body))
 
 data
-
 ```
 
 ## Task 3 - Publish to Posit Connect
 
-Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment. 
+Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment.
 
-1. **Deployment** > **Create New Deployment** > Select `data-connection.qmd` as the entrypoint file > **Publish document with source code** > enter a title > press **Enter** to select `pub.workshop.posit.team` as the destination
-2. (One time only) Add your Posit Connect API key
-3. Configure deployment options
-4. Deploy
+1.  **Deployment** \> **Create New Deployment** \> Select `data-connection.qmd` as the entrypoint file \> **Publish document with source code** \> enter a title \> press **Enter** to select `pub.workshop.posit.team` as the destination
+2.  (One time only) Add your Posit Connect API key
+3.  Configure deployment options
+4.  Deploy

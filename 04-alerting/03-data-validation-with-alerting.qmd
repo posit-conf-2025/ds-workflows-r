@@ -10,7 +10,7 @@ format:
     code-summary: "Show Code"
     code-tools: true
     code-link: true
-editor: visual
+editor: source
 editor_options: 
   chunk_output_type: console
   canonical: true
@@ -35,31 +35,32 @@ library(pointblank)
 library(quarto)
 library(glue) 
 library(gt)
-library(connectapi)
-
 ```
 
 Load the cola sales data.
 
 ```{r}
-#| label: if Connect, exchange content token for OAuth credential
+#| label: connect-credentials
 
-# if running on Connect, retrive credentials from OAuth integration
+# Exchange token for AWS credentials when running on Connect
 if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
-
-# init Posit Connect API client
   
-  client <- connect()
-  credentials <- get_aws_content_credentials(client)
+  # Show that we are running in Posit Connect
+  print("This code is running in Posit Connect!")
 
-
+  # Create the Posit Connect client
+  client <- connectapi::connect()
+    
+  # exchange the session token for the AWS credentials
+  credentials <- connectapi::get_aws_content_credentials(client)
+  
+  # set the credentials as environment variables for the session
   Sys.setenv(
-  AWS_ACCESS_KEY_ID = credentials$access_key_id,
-  AWS_SECRET_ACCESS_KEY = credentials$secret_access_key,
-  AWS_SESSION_TOKEN = credentials$session_token, 
-  AWS_REGION = "us-east-2"
+    AWS_ACCESS_KEY_ID = credentials$access_key_id,
+    AWS_SECRET_ACCESS_KEY = credentials$secret_access_key,
+    AWS_SESSION_TOKEN = credentials$session_token,
+    AWS_REGION = "us-east-2"
   )
-
 }
 ```
 
@@ -75,12 +76,11 @@ file_key <- "posit_cola_sales_data.csv"
 
 # Read the data from S3
 response <- s3_client$get_object(
-Bucket = bucket_name,
-Key = file_key
+  Bucket = bucket_name,
+  Key = file_key
 )
 
 data <- read_csv(rawToChar(response$Body))
-
 ```
 
 We will want to verify our column schema matches what is expected. Let's define our schema for use in our validation plan.
@@ -147,9 +147,7 @@ agent <- create_agent(data, label = "Cola Sales Data Validation") |>
   # interrogate
   interrogate()
 
-
 agent
-
 ```
 
 ## Task 2 - Were any action levels set?
@@ -162,14 +160,11 @@ Remember the xlist? The information about whether any of our action flags were s
 xlist <- pointblank::get_agent_x_list(agent)
 
 xlist
-
 ```
 
 ```{r}
-
 stop_notice <- any(xlist$stop)
 warn_notice <- any(xlist$warn)
-
 ```
 
 ## Task 3 - Set conditionals depending on validation outcome and write Quarto metadata
@@ -198,10 +193,21 @@ if (isTRUE(stop_notice)){
 
 glue::glue("condition set to: ", {condition})
 glue::glue("send_email set to: ", {send_email})
-
 ```
 
 We will select which email gets sent by writing metadata to Quarto. The `quarto` R package includes a function `write_yaml_metadata_block` which will allow dynamic creation of metadata that is read at document render.
+
+```{r}
+#| label: quarto-meta
+
+# using setNames to dynamically set the key name
+quarto_metadata <- setNames( 
+  nm = glue::glue("is_email_variant_{condition}"), 
+  list(TRUE)
+)
+
+quarto_metadata
+```
 
 Importantly, in the code block, you must include `#| output: asis` for correct rendering.
 
@@ -211,19 +217,13 @@ Importantly, in the code block, you must include `#| output: asis` for correct r
 
 quarto::write_yaml_metadata_block(
   # the yaml will be of the form `is_email_variant_{condition}: true`
-  # using setNames to dynamically set the key name
-  .list = setNames( 
-    nm = glue::glue("is_email_variant_{condition}"), list(TRUE)
-    )
+  .list = quarto_metadata
 )
-
 
 # this will output yaml-formmatted text into the Quarto document, interpreted at render. Example:
 #---
 #is_email_variant_WARN: true
 #---
-
-
 ```
 
 ## Task 4 - Conditionally write the validated data for downstream use
@@ -235,17 +235,12 @@ As long as we don't have a STOP condition, we will write the validated data to a
 
 # sunder the data (aka remove the failed records)
 data_validated <- get_sundered_data(agent = agent, type = "pass")
-
 ```
 
 ```{r}
-#| label: write data
-#| eval: false 
-
-# note, for the workshop, we set `eval: false` for this chunk because participants do not have write access to the S3 bucket
+#| label: write-data-to-s3
 
 # Conditionally write back to S3
-
 if (condition %in% c("WARN","OKAY")){
     
     file_key <- "posit_cola_sales_data_validated.csv"
@@ -253,15 +248,17 @@ if (condition %in% c("WARN","OKAY")){
     # Convert the dataframe to CSV format
     csv_data <- readr::format_csv(data_validated)
     
-    # Write the CSV data to S3
-    s3_client$put_object(
-      Bucket = bucket_name,
-      Key = file_key,
-      Body = csv_data
-    )
-    
-}
+    print("Writing data to S3...")
 
+    # note, for the workshop, we set `eval: false` for this chunk because participants do not have write access to the S3 bucket
+
+    # Write the CSV data to S3
+    # s3_client$put_object(
+    #   Bucket = bucket_name,
+    #   Key = file_key,
+    #   Body = csv_data
+    # )   
+}
 ```
 
 ## Task 5 - Write our email
@@ -270,19 +267,18 @@ Use Quarto fenced divs to define an email with different bodies depending on the
 
 And if `send_email` is false (because of `condition == OKAY`), no email will be sent.
 
-::::::: email
-::: email-scheduled
+::::::: {.email}
+::: {.email-scheduled}
 ```{r}
 send_email 
 ```
 :::
 
-::: subject
+::: {.subject}
 ```{r}
 #| label: define subject
 #| echo: false
 #| output: asis
-
 
 if (condition == "STOP"){
   glue::glue("⚠️ ALERT: Posit Cola sales data integrity issue")
@@ -291,8 +287,6 @@ if (condition == "STOP"){
 } else {
   NA
 }
-
-
 ```
 :::
 
@@ -309,7 +303,6 @@ Please review the raw data to diagnose the issue. An extract of the raw data is 
 #| echo: false
 
 head(data)
-
 ```
 :::
 
@@ -332,7 +325,15 @@ if (condition == "WARN") {
   fails <- xlist$f_failed[which(xlist$warn)]
   threshold <- purrr::map(step, ~{xlist$validation_set$actions[[.x]]$warn_fraction}) |> unlist()
 
-  warnings_table <- data.frame(step, desc,threshold,fails) |> gt() |> cols_label(step="Validation Step",desc="Description",fails="Fraction Failed", threshold="Threshold") |> fmt_number(columns = c(fails, threshold),decimal = 2)
+  warnings_table <- data.frame(step, desc,threshold,fails) |> 
+    gt() |> 
+    cols_label(
+      step="Validation Step",
+      desc="Description",
+      fails="Fraction Failed", 
+      threshold="Threshold"
+    ) |>
+    fmt_number(columns = c(fails, threshold),decimal = 2)
 
   warnings_table |> as_raw_html() 
 }
@@ -410,7 +411,6 @@ Records removed that failed validation: {nrow(data) - nrow(data_validated)}
 
 Records written to database: {nrow(data_validated)}")
 }
-
 ```
 
 ## Preview of email sent:
