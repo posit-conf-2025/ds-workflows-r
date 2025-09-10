@@ -90,9 +90,7 @@ $Arn
 
 In Workbench, credentials "just work" because you are working in your own interactive session running in a distinct R process and environment.
 
-When content runs on Connect, many users might share the runtime environment for their own sessions. So for security, the target system's credential can't be stored ambiently in the environment. There's a credential fetch process we'll perform to trade a non-sensitive session token that is available in the environment for the target credential we want.
-
-On Connect, the context is different. Many users might share the same runtime environment. For security, a powerful credential like an OAuth access token can't be stored directly in that shared space. Instead, our code performs a secure exchange: it trades a temporary **session token** (which is safely available) for the powerful **target credential**. This makes the credential available only in the content session that the user is running.
+When content runs on Connect, many users might share the runtime environment for their own sessions. So for security, the target system's credential can't be stored ambiently in the environment. There's a credential fetch process we'll perform to trade a non-sensitive session token that is available in the environment for the target credential we want. This makes the credential available only in the content session that the user is running.
 
 Here's how we exchange the content session token for AWS credentials:
 
