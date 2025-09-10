@@ -1,5 +1,7 @@
 rm -rf \
-    *email_files/ \
+    *_files/ \
+    *.html \
+    *.csv \
     email-preview/ \
-    .output_metadata.json \
-    *.html
+    .output_metadata.json
+    
