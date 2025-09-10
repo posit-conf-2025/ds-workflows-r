@@ -109,7 +109,7 @@ if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
   client <- connectapi::connect()
     
   # exchange the session token for the AWS credentials
-  credentials <- get_aws_content_credentials(client)
+  credentials <- connectapi::get_aws_content_credentials(client)
   
   # set the credentials as environment variables for the session
   Sys.setenv(

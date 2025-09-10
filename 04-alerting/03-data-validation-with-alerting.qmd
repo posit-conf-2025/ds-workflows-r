@@ -41,6 +41,31 @@ library(gt)
 Load the cola sales data.
 
 ```{r}
+#| label: connect-credentials
+
+# Exchange token for AWS credentials when running on Connect
+if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
+  
+  # Show that we are running in Posit Connect
+  print("This code is running in Posit Connect!")
+
+  # Create the Posit Connect client
+  client <- connectapi::connect()
+    
+  # exchange the session token for the AWS credentials
+  credentials <- connectapi::get_aws_content_credentials(client)
+  
+  # set the credentials as environment variables for the session
+  Sys.setenv(
+    AWS_ACCESS_KEY_ID = credentials$access_key_id,
+    AWS_SECRET_ACCESS_KEY = credentials$secret_access_key,
+    AWS_SESSION_TOKEN = credentials$session_token,
+    AWS_REGION = "us-east-2"
+  )
+}
+```
+
+```{r}
 #| label: load-data
 
 # Make a client service to interact with S3
@@ -216,10 +241,7 @@ data_validated <- get_sundered_data(agent = agent, type = "pass")
 ```
 
 ```{r}
-#| label: write data
-#| eval: false 
-
-# note, for the workshop, we set `eval: false` for this chunk because participants do not have write access to the S3 bucket
+#| label: write-data-to-s3
 
 # Conditionally write back to S3
 
@@ -230,13 +252,16 @@ if (condition %in% c("WARN","OKAY")){
     # Convert the dataframe to CSV format
     csv_data <- readr::format_csv(data_validated)
     
+    print("Writing data to S3...")
+
+    # note, for the workshop, we set `eval: false` for this chunk because participants do not have write access to the S3 bucket
+
     # Write the CSV data to S3
-    s3_client$put_object(
-      Bucket = bucket_name,
-      Key = file_key,
-      Body = csv_data
-    )
-    
+    # s3_client$put_object(
+    #   Bucket = bucket_name,
+    #   Key = file_key,
+    #   Body = csv_data
+    # )   
 }
 
 ```
