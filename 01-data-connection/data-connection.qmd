@@ -150,7 +150,7 @@ data
 
 Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment.
 
-1.  **Deployment** \> **Create New Deployment** \> Select `data-connection.qmd` as the entrypoint file \> **Publish document with source code** \> enter a title \> press **Enter** to select `pub.workshop.posit.team` as the destination
+1.  Click the **Posit Publisher Icon** at the top of this document \> **Publish document with source code** \> enter a title \> press **Enter** to select `pub.workshop.posit.team` as the destination
 2.  (One time only) Add your Posit Connect API key
 3.  Configure deployment options
 4.  Deploy
