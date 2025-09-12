@@ -126,7 +126,7 @@ agent
 
 Tip: Use the Positron Assistant to generate the additional validations:
 
-> Complete the missing validations as documented in the comments.
+> Create pointblank validations where there are ___ placeholders.
 
 If we look at the output of `agent`, it shows our validation plan, but the action is yet to come. Next step is to run it with **interrogate**!
 
