@@ -6,7 +6,20 @@ library(purrr)
 library(ellmer)
 
 # Read data
-cola_data <- read_csv("../tmp-data/posit_cola_sales_data.csv")
+# Make a client service to interact with S3
+s3_client <- paws::s3()
+
+# Bucket information
+bucket_name <- "ptd-demo-bucket"
+file_key <- "posit_cola_sales_data_validated.csv"
+
+# Read the data from S3
+response <- s3_client$get_object(
+Bucket = bucket_name,
+Key = file_key
+)
+
+cola_data <- read_csv(rawToChar(response$Body))
 
 # 1. Create a data source for querychat
 cola_source <- querychat_data_source(cola_data)
