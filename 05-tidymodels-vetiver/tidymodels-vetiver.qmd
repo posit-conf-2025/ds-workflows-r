@@ -1,6 +1,7 @@
 ---
 title: "Tidymodels and Vetiver"
 format: html
+editor: visual
 editor_options: 
   chunk_output_type: console
   canonical: true
@@ -56,7 +57,7 @@ Navigate back to your `.Renviron` file and add the following line. It's always a
 CONNECT_API_KEY="paste-your-api-key-here"
 ```
 
-Now you can close the `.Renviron` file and restart your R session (the refresh icon in your console) so that the API key varialble get's added to our environment. To confirm it worked, try running the following code:
+Now you can close the `.Renviron` file and restart your R session (the refresh icon in your console) so that the API key variable get's added to our environment. To confirm it worked, try running the following code:
 
 ```{r}
 # Check if CONNECT_API_KEY is added to environment
@@ -74,6 +75,7 @@ You should see the API key in the console. If not, please raise your hand and we
 #| label: setup
 
 library(tidymodels)
+library(usethis)
 library(dplyr)
 library(readr)
 library(vetiver)
@@ -82,6 +84,7 @@ library(plumber)
 library(rsconnect)
 library(ranger)
 library(paws)
+library(ggplot2)
 
 # Username
 username <- "____" # Add in your username
@@ -118,7 +121,6 @@ Key = file_key
 posit_cola_data <- read_csv(rawToChar(response$Body))
 ```
 
-
 ```{r}
 #| label: explore-data
 
@@ -148,7 +150,7 @@ model_data <- posit_cola_data |>
 
 #### Split Data
 
-For modeling, you often split your data into a **training and testing** dataset. Before we do that, we'll first extract the last 500 rows, which will be used later on for model monitoring.
+For modeling, you often split your data into a **training and testing** dataset.
 
 ```{r}
 #| label: split-data
@@ -271,7 +273,7 @@ board <- board_connect()
 board |> vetiver_pin_write(vetiver_model)
 ```
 
-Navigate to Posit Connect and check out your pinned model! You'll also notice a message asking you to create a **Model Card**. This is alsways a good idea, especially if you will be sharing your model with others.
+Navigate to Posit Connect and check out your pinned model! You'll also notice a message asking you to create a **Model Card**. This is always a good idea, especially if you will be sharing your model with others.
 
 🛑 Stop here!
 
@@ -293,6 +295,18 @@ APIs are a great way for users, applications, or other systems to interact with 
 
 ```{r}
 #| label: create-api
+
+# First register the Connect server
+rsconnect::addServer(
+  url = Sys.getenv("CONNECT_SERVER"),
+  name = "workshop"
+)
+
+# Then authenticate
+rsconnect::connectApiUser(
+  server = "workshop",
+  apiKey = Sys.getenv("CONNECT_API_KEY")
+)
 
 # Create API from pinned model using vetiver
 vetiver_deploy_rsconnect(
@@ -381,10 +395,10 @@ We only have 1 version of our model, but let's list it anyway by using the `pin_
 #| label: list-pin-versions
 
 # View versions of your model 
-pin_versions(board = board, name = paste0(username, "posit_cola_revenue_model"))
+pin_versions(board = board, name = paste0(username, "/posit_cola_revenue_model"))
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = paste0(username, "posit_cola_revenue_model"))$description
+pin_meta(board = board, name = paste0(username, "/posit_cola_revenue_model"))$description
 ```
 
 #### Create Another Model (Random forest)
@@ -443,10 +457,10 @@ vetiver_model_rf <- vetiver_model(
 board |> vetiver_pin_write(vetiver_model_rf)
 
 # View versions of your model
-pin_versions(board = board, name = paste0(username, "posit_cola_revenue_model"))
+pin_versions(board = board, name = paste0(username, "/posit_cola_revenue_model"))
 
 # We can also extract some metadata from the pin
-pin_meta(board = board, name = paste0(username, "posit_cola_revenue_model"))$description
+pin_meta(board = board, name = paste0(username, "/posit_cola_revenue_model"))$description
 ```
 
 #### Monitor Model Performance
@@ -459,13 +473,13 @@ How do we know which model is performing better? Logistic regression or random f
 #| label: monitor-model-performance
 
 # Read in monitoring data
-monitoring_data <- read_csv("../tmp-data/posit_cola_sales_monitoring_data.csv")
+monitoring_data <- read_csv("posit_cola_sales_monitoring_data.csv")
 
 # Load the vetiver model
-vetiver_model_lm <- vetiver_pin_read(board, paste0(username, "posit_cola_revenue_model"), version = "____")
+vetiver_model_lm <- vetiver_pin_read(board, paste0(username, "/posit_cola_revenue_model"), version = "____")
 
 # Load the vetiver model rf
-vetiver_model_rf <- vetiver_pin_read(board, paste0(username, "posit_cola_revenue_model"), version = "____")
+vetiver_model_rf <- vetiver_pin_read(board, paste0(username, "/posit_cola_revenue_model"), version = "____")
 
 # Compute metrics for the logistic regression model
 sales_revenue_metrics_lm <-
@@ -494,7 +508,6 @@ combined_metrics <- bind_rows(
 )
 
 # Create combined plot showing both models
-library(ggplot2)
 combined_metrics |>
   ggplot(aes(x = .index, y = .estimate, color = model)) +
   geom_line(linewidth = 1.2) +
