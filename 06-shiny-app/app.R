@@ -6,7 +6,7 @@ library(jsonlite)
 library(vetiver)
 
 # API configuration
-API_URL <- "https://pub.workshop.posit.team/content/5f205799-df6a-40c3-9095-800c21120e16"
+API_URL <- "___"
 # IMPORTANT: Ensure your CONNECT_API_KEY environment variable is set
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
