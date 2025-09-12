@@ -38,7 +38,7 @@ library(usethis)
 # Create/Open your .Renviron file
 usethis::edit_r_environ()
 
-# If Positron does not open the file, use the command pallete (Cmd/Ctrl + Shift + P) to "File: Open File"
+# If Positron does not open the file, use the command palette (Cmd/Ctrl + Shift + P) to "File: Open File"
 #  and select the `.Renviron` file in your "home/username" directory.
 ```
 
@@ -60,7 +60,7 @@ CONNECT_API_KEY="paste-your-api-key-here"
 Now you can close the `.Renviron` file and restart your R session (the refresh icon in your console) so that the API key variable get's added to our environment. To confirm it worked, try running the following code:
 
 ```{r}
-# Check if CONNECT_API_KEY is added to environment
+# Check if CONNECT_API_KEY is added to your environment
 Sys.getenv("CONNECT_API_KEY")
 
 # Also check if CONNECT_SERVER is in your environment
@@ -291,8 +291,6 @@ APIs are a great way for users, applications, or other systems to interact with 
 
 #### Deploy API to Posit Connect
 
-**Be sure to add your user name for the pin!**
-
 ```{r}
 #| label: create-api
 
@@ -403,7 +401,7 @@ pin_meta(board = board, name = paste0(username, "/posit_cola_revenue_model"))$de
 
 #### Create Another Model (Random forest)
 
-Let's create another model to answer the same question as our logistic regression model: can we predict posit-cola sales revenue? The below code cell will create, train, and assess the performance of a regression model using the random forest engine. This model will be used to compare against our first model.
+Let's create another model to answer the same question as our logistic regression model: Can we predict posit-cola sales revenue? The code cell below will create, train, and assess the performance of a regression model using the random forest engine. This model will be used to compare against our first model.
 
 ```{r}
 #| label: create-rf-model
@@ -507,7 +505,7 @@ combined_metrics <- bind_rows(
   sales_revenue_metrics_rf |> mutate(model = "Random Forest")
 )
 
-# Create combined plot showing both models
+# Create a combined plot showing both models
 combined_metrics |>
   ggplot(aes(x = .index, y = .estimate, color = model)) +
   geom_line(linewidth = 1.2) +
