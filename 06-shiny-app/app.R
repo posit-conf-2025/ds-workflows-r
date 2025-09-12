@@ -6,7 +6,7 @@ library(jsonlite)
 library(vetiver)
 
 # API configuration
-API_URL <- "___"
+API_URL <- Sys.getenv("API_URL")
 # IMPORTANT: Ensure your CONNECT_API_KEY environment variable is set
 API_KEY <- Sys.getenv("CONNECT_API_KEY")
 
