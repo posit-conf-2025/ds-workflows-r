@@ -123,7 +123,6 @@ The `pointblank::scan_data()` function provides a HTML report of the input data 
 # ⚠️ "I" and "C" can take multiple minutes to run! Omit these for the sake of time.
   
 scan <- pointblank::scan_data(data, sections = "OVMS")
-
 scan
 ```
 

@@ -413,7 +413,7 @@ Records written to database: {nrow(data_validated)}")
 }
 ```
 
-## Preview of email sent:
+## Preview of email sent
 
 <iframe src="email-preview/index.html" width="100%" height="500">
 

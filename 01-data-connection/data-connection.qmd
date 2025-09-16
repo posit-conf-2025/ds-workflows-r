@@ -47,7 +47,6 @@ The goals of this activity are to:
 library(paws)
 library(tidyverse)
 library(connectapi)
-
 ```
 
 ## Task 1 - Verify credentials in Workbench
@@ -116,6 +115,9 @@ if (Sys.getenv("POSIT_PRODUCT") == "CONNECT") {
     AWS_SESSION_TOKEN = credentials$session_token,
     AWS_REGION = "us-east-2"
   )
+
+    svc <- paws::sts()
+    print(svc$get_caller_identity())
 }
 ```
 
@@ -135,7 +137,6 @@ bucket_name <- "ptd-demo-bucket"
 file_key <- "posit_cola_sales_data.csv"
 
 # Read the data from S3
-
 response <- s3_client$get_object(
   Bucket = bucket_name,
   Key = file_key
@@ -151,6 +152,6 @@ data
 Using the Posit Publisher extension, let's publish this to Connect and see our OAuth Credentials at work in this environment.
 
 1.  Click the **Posit Publisher Icon** at the top of this document \> **Publish document with source code** \> enter a title \> press **Enter** to select `pub.workshop.posit.team` as the destination
-2.  (One time only) Add your Posit Connect API key
+2.  Select "Token Authentication" as the authentication method
 3.  Configure deployment options
 4.  Deploy
