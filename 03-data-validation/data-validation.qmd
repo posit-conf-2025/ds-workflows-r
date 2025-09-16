@@ -65,21 +65,6 @@ data |> glimpse()
 data |> spec()
 ```
 
-```{r}
-# define our column schema, which we will use in validation
-schema_data <- col_schema(
-  date = "Date",
-  product = "character", 
-  region = "character",
-  store_type = "character",
-  store_id = "numeric",
-  units_sold = "numeric",
-  unit_price = "numeric",
-  revenue = "numeric",
-  promotion = "character"
-)
-```
-
 ## Task 1 - Create a validation plan
 
 To create a validation plan using `pointblank` we need to:
@@ -103,22 +88,34 @@ Now we define our **data validation functions**. A few have been started for you
 
 agent <- create_agent(data, label = "Cola Sales Data Validation") |> 
   # Verify schema
-  col_schema_match(schema_data) |>
+  col_schema_match(
+      col_schema(
+      date = "Date",
+      product = "character", 
+      region = "character",
+      store_type = "character",
+      store_id = "numeric",
+      units_sold = "numeric",
+      unit_price = "numeric",
+      revenue = "numeric",
+      promotion = "character"
+      )
+  ) |>
   # Required fields are present
-  col_vals_not_null(columns = c(date, product, region, store_id, units_sold, unit_price)) |>
+  col_vals_not_null(columns = c(date, product, region, store_id, units_sold, unit_price)) # |>
   # Ensure all rows are distinct (no dupliates)
-  ____ |>
+  # ____ |>
   # Validate that `units_sold`, `unit_price`, and `revenue` are reasonable values
-  ____ |>
-  ____ |>
-  ____ |>
+  # ____ |>
+  # ____ |>
+  # ____ |>
   # Validate product names are among the expected set of names
-  ____ |>
+  # ____ |>
   # Validate date is in expected range
-  ____ |>
+  # ____ |>
   # What else would you validate?
-  ____ |> 
-  ____ 
+  # ____ |> 
+  # ____ 
 
 
 agent
@@ -166,7 +163,6 @@ data_validated <- get_sundered_data(agent = ____, type = "____")
 
 # Failed data
 data_faulty <- get_sundered_data(agent = ____, type = "____")
-
 ```
 
 ## Task 4 - Post-interrogation logicals
@@ -182,7 +178,6 @@ Pointblank interrogation provides multiple layers of information about our data.
 
 # Did all validations pass?
 pointblank::____
-
 ```
 
 A broad all passed / failed for the entire validation plan might not provide enough granularity for a downstream task. We can drill into more details about each step of the validation and the results using the agent "x_list".
