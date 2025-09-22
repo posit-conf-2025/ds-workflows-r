@@ -2,7 +2,7 @@
 
 ### posit::conf(2025)
 
-by Katie Masiello and Ryan Johnson
+by Katie Masiello, Ryan Johnson, and Sam Edwardes
 
 ------------------------------------------------------------------------
 
@@ -45,6 +45,11 @@ This course is for you if you:
 | **1:30-3:00**     | Reporting                                         |
 | **3:00-3:30**     | *Coffee break*                                    |
 | **3:30-5:00**     | AI Showcase                                       |
+
+### Post-conference resource ## Post-conference resources
+
+- Data: [posit-cola.csv](./posit-cola.csv)
+- Slides: [2025.DS.Workflows.using.Posit.Tools.-.R.pdf](https://github.com/posit-conf-2025/ds-workflows-r/releases/download/2025-09-22/2025.DS.Workflows.using.Posit.Tools.-.R.pdf)
 
 ## Instructor(s)
 
